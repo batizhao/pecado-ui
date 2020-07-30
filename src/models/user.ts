@@ -8,6 +8,7 @@ export interface CurrentUser {
   email?: string;
   name?: string;
   avatar?: string;
+  unreadCount?: number;
 }
 
 export interface UserModelState {

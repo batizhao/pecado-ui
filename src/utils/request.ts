@@ -53,4 +53,27 @@ const request = extend({
   credentials: 'include', // 默认请求是否带上cookie
 });
 
+request.interceptors.request.use((url, options) => {
+  const token = localStorage.getItem('token');
+  const defaultOptions = { ...options };
+  if (token && token !== 'undefined' && !url.startsWith('/api/uaa/oauth/token')) {
+    defaultOptions.headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+  }
+  return {
+    url,
+    options: { ...defaultOptions },
+  };
+});
+
+request.interceptors.response.use(async (response) => {
+  const data = await response.clone().json();
+  if(data.code === 100003) {
+    location.href = '/user/login';
+  }
+  return response;
+})
+
 export default request;

@@ -11,13 +11,30 @@ import ProLayout, {
 } from '@ant-design/pro-layout';
 import React, { useEffect } from 'react';
 import { Link, useIntl, connect, Dispatch, history } from 'umi';
-import { GithubOutlined } from '@ant-design/icons';
+import {
+  DashboardOutlined,
+  SettingOutlined,
+  GithubOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { Result, Button } from 'antd';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
+const IconMap = {
+  dashboard: <DashboardOutlined />,
+  setting: <SettingOutlined />,
+  user: <UserOutlined />,
+};
+
+const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] =>
+  menus.map(({ icon, children, ...item }) => ({
+    ...item,
+    icon: icon && IconMap[icon as string],
+    children: children && loopMenuItem(children),
+  }));
 const noMatch = (
   <Result
     status={403}
@@ -39,6 +56,7 @@ export interface BasicLayoutProps extends ProLayoutProps {
   };
   settings: Settings;
   dispatch: Dispatch;
+  currentMenu: MenuDataItem[];
 }
 export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
   breadcrumbNameMap: {
@@ -92,6 +110,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
     location = {
       pathname: '/',
     },
+    currentMenu,
   } = props;
   /**
    * constructor
@@ -101,6 +120,9 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
     if (dispatch) {
       dispatch({
         type: 'user/fetchCurrent',
+      });
+      dispatch({
+        type: 'menu/fetchCurrent',
       });
     }
   }, []);
@@ -149,7 +171,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
         );
       }}
       footerRender={() => defaultFooterDom}
-      menuDataRender={menuDataRender}
+      menuDataRender={() => loopMenuItem(currentMenu)}
       rightContentRender={() => <RightContent />}
       {...props}
       {...settings}
@@ -161,7 +183,8 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   );
 };
 
-export default connect(({ global, settings }: ConnectState) => ({
+export default connect(({ global, settings, menu }: ConnectState) => ({
   collapsed: global.collapsed,
   settings,
+  currentMenu: menu.currentMenu,
 }))(BasicLayout);

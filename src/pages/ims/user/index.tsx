@@ -6,7 +6,7 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { TableListItem } from './data.d';
+import { TableListItem } from './data';
 import { queryRule, updateRule, addRule, removeRule } from './service';
 
 /**
@@ -36,8 +36,8 @@ const handleUpdate = async (fields: FormValueType) => {
   try {
     await updateRule({
       name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
+      username: fields.username,
+      id: fields.id,
     });
     hide();
 
@@ -59,7 +59,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   if (!selectedRows) return true;
   try {
     await removeRule({
-      key: selectedRows.map((row) => row.key),
+      id: selectedRows.map((row) => row.id),
     });
     hide();
     message.success('删除成功，即将刷新');
@@ -79,51 +79,45 @@ const TableList: React.FC<{}> = () => {
   const [selectedRowsState, setSelectedRows] = useState<TableListItem[]>([]);
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '规则名称',
+      title: '姓名',
       dataIndex: 'name',
       rules: [
         {
           required: true,
-          message: '规则名称为必填项',
+          message: '姓名为必填项',
         },
       ],
     },
     {
-      title: '描述',
-      dataIndex: 'desc',
-      valueType: 'textarea',
+      title: '用户名',
+      dataIndex: 'username',
     },
     {
-      title: '服务调用次数',
-      dataIndex: 'callNo',
-      sorter: true,
+      title: '电子邮箱',
+      dataIndex: 'email',      
       hideInForm: true,
-      renderText: (val: string) => `${val} 万`,
     },
     {
       title: '状态',
-      dataIndex: 'status',
+      dataIndex: 'locked',
       hideInForm: true,
       valueEnum: {
-        0: { text: '关闭', status: 'Default' },
-        1: { text: '运行中', status: 'Processing' },
-        2: { text: '已上线', status: 'Success' },
-        3: { text: '异常', status: 'Error' },
+        0: { text: '正常', status: 'Success' },
+        1: { text: '禁用', status: 'Error' },
       },
     },
     {
-      title: '上次调度时间',
-      dataIndex: 'updatedAt',
-      sorter: true,
+      title: '注册时间',
+      dataIndex: 'createdTime',
       valueType: 'dateTime',
       hideInForm: true,
       renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-        if (`${status}` === '0') {
+        const locked = form.getFieldValue('locked');
+        if (`${locked}` === '0') {
           return false;
         }
-        if (`${status}` === '3') {
-          return <Input {...rest} placeholder="请输入异常原因！" />;
+        if (`${locked}` === '1') {
+          return <Input {...rest} placeholder="请输入禁用原因！" />;
         }
         return defaultRender(item);
       },
@@ -140,10 +134,12 @@ const TableList: React.FC<{}> = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            编辑
           </a>
           <Divider type="vertical" />
-          <a href="">订阅警报</a>
+          <a href="">删除</a>
+          <Divider type="vertical" />
+          <a href="">禁用</a>
         </>
       ),
     },
@@ -154,7 +150,7 @@ const TableList: React.FC<{}> = () => {
       <ProTable<TableListItem>
         headerTitle="查询表格"
         actionRef={actionRef}
-        rowKey="key"
+        rowKey="id"
         toolBarRender={() => [
           <Button type="primary" onClick={() => handleModalVisible(true)}>
             <PlusOutlined /> 新建
@@ -171,13 +167,10 @@ const TableList: React.FC<{}> = () => {
           extra={
             <div>
               已选择 <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a> 项&nbsp;&nbsp;
-              <span>
-                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)} 万
-              </span>
             </div>
           }
         >
-          <Button
+          <Button type="dashed" danger
             onClick={async () => {
               await handleRemove(selectedRowsState);
               setSelectedRows([]);
@@ -186,7 +179,7 @@ const TableList: React.FC<{}> = () => {
           >
             批量删除
           </Button>
-          <Button type="primary">批量审批</Button>
+          <Button>批量禁用</Button>
         </FooterToolbar>
       )}
       <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
@@ -200,7 +193,7 @@ const TableList: React.FC<{}> = () => {
               }
             }
           }}
-          rowKey="key"
+          rowKey="id"
           type="form"
           columns={columns}
           rowSelection={{}}

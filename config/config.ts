@@ -48,35 +48,45 @@ export default defineConfig({
           routes: [
             {
               path: '/',
-              redirect: '/welcome',
+              redirect: '/dashboard',
             },
             {
-              path: '/welcome',
-              name: 'welcome',
-              icon: 'smile',
+              path: '/dashboard',
+              name: '工作台',
               component: './Welcome',
             },
             {
-              path: '/admin',
-              name: 'admin',
-              icon: 'crown',
-              component: './Admin',
+              path: '/ims',
+              name: '权限管理',
               // authority: ['admin'],
               routes: [
                 {
-                  path: '/admin/sub-page',
-                  name: 'sub-page',
-                  icon: 'smile',
-                  component: './Welcome',
-                  // authority: ['admin'],
+                  path: '/ims/user',
+                  name: '用户管理',
+                  component: './ims/user',
+                },
+                {
+                  path: '/ims/role',
+                  name: '角色管理',
+                  component: './ims/user',
+                },
+                {
+                  path: '/ims/menu',
+                  name: '菜单管理',
+                  component: './ims/user',
                 },
               ],
             },
             {
-              name: 'list.table-list',
-              icon: 'table',
-              path: '/list',
-              component: './ListTableList',
+              name: '系统管理',
+              path: '/system',
+              routes: [
+                {
+                  path: '/system/log',
+                  name: '日志管理',
+                  component: './Admin',
+                },
+              ],
             },
             {
               component: './404',

@@ -1,16 +1,12 @@
 export interface TableListItem {
-  key: number;
-  disabled?: boolean;
-  href: string;
+  id: number;
+  username: string;
   avatar: string;
   name: string;
-  owner: string;
-  desc: string;
-  callNo: number;
-  status: number;
+  email: string;
+  locked: number;
   updatedAt: Date;
-  createdAt: Date;
-  progress: number;
+  createdTime: Date;
 }
 
 export interface TableListPagination {
@@ -27,8 +23,8 @@ export interface TableListData {
 export interface TableListParams {
   status?: string;
   name?: string;
-  desc?: string;
-  key?: number;
+  username?: string;
+  id?: number;
   pageSize?: number;
   currentPage?: number;
   filter?: { [key: string]: any[] };

@@ -5,7 +5,6 @@ export interface TableListItem {
   name: string;
   email: string;
   locked: number;
-  updatedAt: Date;
   createdTime: Date;
 }
 
@@ -21,10 +20,10 @@ export interface TableListData {
 }
 
 export interface TableListParams {
-  status?: string;
+  locked?: number;
   name?: string;
   username?: string;
-  id?: number;
+  email?: string;
   pageSize?: number;
   currentPage?: number;
   filter?: { [key: string]: any[] };

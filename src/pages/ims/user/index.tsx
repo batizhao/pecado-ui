@@ -1,13 +1,20 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, message, Input } from 'antd';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, message, Input, Modal, Dropdown, Menu } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
+// import UserForm from './components/UserForm';
 import CreateForm from './components/CreateForm';
-import UpdateForm, { FormValueType } from './components/UpdateForm';
+import UpdateForm from './components/UpdateForm';
 import { TableListItem } from './data';
-import { queryRule, updateRule, addRule, removeRule } from './service';
+import { queryRule, addOrUpdateRule, removeRule } from './service';
+
+// interface BasicListProps {
+//   listAndbasicList: StateType;
+//   dispatch: Dispatch<any>;
+//   loading: boolean;
+// }
 
 /**
  * 添加节点
@@ -16,7 +23,7 @@ import { queryRule, updateRule, addRule, removeRule } from './service';
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    await addRule({ ...fields });
+    await addOrUpdateRule({ ...fields });
     hide();
     message.success('添加成功');
     return true;
@@ -31,21 +38,16 @@ const handleAdd = async (fields: TableListItem) => {
  * 更新节点
  * @param fields
  */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
+const handleUpdate = async (fields: TableListItem) => {
+  const hide = message.loading('正在编辑');
   try {
-    await updateRule({
-      name: fields.name,
-      username: fields.username,
-      id: fields.id,
-    });
+    await addOrUpdateRule({ ...fields });
     hide();
-
-    message.success('配置成功');
+    message.success('编辑成功');
     return true;
   } catch (error) {
     hide();
-    message.error('配置失败请重试！');
+    message.error('编辑失败请重试！');
     return false;
   }
 };
@@ -56,7 +58,7 @@ const handleUpdate = async (fields: FormValueType) => {
  */
 const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
+  // if (!selectedRows) return true;
   try {
     await removeRule({
       id: selectedRows.map((row) => row.id),
@@ -77,6 +79,42 @@ const TableList: React.FC<{}> = () => {
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
   const [selectedRowsState, setSelectedRows] = useState<TableListItem[]>([]);
+
+  const showEditModal = (item: TableListItem) => {
+    handleUpdateModalVisible(true);
+    setStepFormValues(item);
+  };
+
+  const editAndDelete = (key: string, currentItem: TableListItem) => {
+    if (key === 'edit') showEditModal(currentItem);
+    else if (key === 'delete') {
+      Modal.confirm({
+        title: '删除任务',
+        content: '确定删除该任务吗？',
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => handleRemove(Object.values(currentItem)),
+      });
+    }
+  };
+
+  const MoreBtn: React.FC<{
+    item: TableListItem;
+  }> = ({ item }) => (
+    <Dropdown
+      overlay={
+        <Menu onClick={({ key }) => editAndDelete(key, item)}>
+          <Menu.Item key="edit">编辑</Menu.Item>
+          <Menu.Item key="delete">删除</Menu.Item>
+        </Menu>
+      }
+    >
+      <a>
+        更多 <DownOutlined />
+      </a>
+    </Dropdown>
+  );
+
   const columns: ProColumns<TableListItem>[] = [
     {
       title: '姓名',
@@ -91,11 +129,23 @@ const TableList: React.FC<{}> = () => {
     {
       title: '用户名',
       dataIndex: 'username',
+      rules: [
+        {
+          required: true,
+          message: '用户名为必填项',
+        },
+      ],
     },
     {
-      title: '电子邮箱',
-      dataIndex: 'email',      
-      hideInForm: true,
+      title: '邮箱',
+      dataIndex: 'email',
+      rules: [
+        {
+          required: true,
+          type: 'email',
+          message: '邮箱为必填项',
+        },
+      ],    
     },
     {
       title: '状态',
@@ -130,16 +180,13 @@ const TableList: React.FC<{}> = () => {
         <>
           <a
             onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              showEditModal(record);
             }}
           >
             编辑
           </a>
           <Divider type="vertical" />
-          <a href="">删除</a>
-          <Divider type="vertical" />
-          <a href="">禁用</a>
+          <MoreBtn key="more" item={record} />
         </>
       ),
     },
@@ -182,6 +229,7 @@ const TableList: React.FC<{}> = () => {
           <Button>批量禁用</Button>
         </FooterToolbar>
       )}
+
       <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
         <ProTable<TableListItem, TableListItem>
           onSubmit={async (value) => {
@@ -193,7 +241,7 @@ const TableList: React.FC<{}> = () => {
               }
             }
           }}
-          rowKey="id"
+          rowKey="key"
           type="form"
           columns={columns}
           rowSelection={{}}

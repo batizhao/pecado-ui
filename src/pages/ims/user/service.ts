@@ -9,30 +9,19 @@ export async function queryRule(params?: TableListParams) {
 
 export async function removeRule(params: { id: number[] }) {
   return request('/api/ims/user', {
-    method: 'POST',
+    method: 'DELETE',
     data: {
       ...params,
-      method: 'delete',
     },
   });
 }
 
-export async function addRule(params: TableListItem) {
+export async function addOrUpdateRule(params: TableListItem) {
   return request('/api/ims/user', {
     method: 'POST',
     data: {
       ...params,
       method: 'post',
-    },
-  });
-}
-
-export async function updateRule(params: TableListParams) {
-  return request('/api/ims/user', {
-    method: 'POST',
-    data: {
-      ...params,
-      method: 'update',
     },
   });
 }

@@ -1,20 +1,13 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Input, Modal, Dropdown, Menu } from 'antd';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, ReactText } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
-// import UserForm from './components/UserForm';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import { TableListItem } from './data';
-import { queryRule, addOrUpdateRule, removeRule } from './service';
-
-// interface BasicListProps {
-//   listAndbasicList: StateType;
-//   dispatch: Dispatch<any>;
-//   loading: boolean;
-// }
+import { queryUser, addOrUpdateUser, removeUser } from './service';
 
 /**
  * 添加节点
@@ -23,7 +16,7 @@ import { queryRule, addOrUpdateRule, removeRule } from './service';
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    await addOrUpdateRule({ ...fields });
+    await addOrUpdateUser({ ...fields });
     hide();
     message.success('添加成功');
     return true;
@@ -41,7 +34,7 @@ const handleAdd = async (fields: TableListItem) => {
 const handleUpdate = async (fields: TableListItem) => {
   const hide = message.loading('正在编辑');
   try {
-    await addOrUpdateRule({ ...fields });
+    await addOrUpdateUser({ ...fields });
     hide();
     message.success('编辑成功');
     return true;
@@ -58,9 +51,9 @@ const handleUpdate = async (fields: TableListItem) => {
  */
 const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
-  // if (!selectedRows) return true;
+  if (!selectedRows) return true;
   try {
-    await removeRule({
+    await removeUser({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -85,12 +78,12 @@ const TableList: React.FC<{}> = () => {
     setStepFormValues(item);
   };
 
-  const editAndDelete = (key: string, currentItem: TableListItem) => {
+  const editAndDelete = (key: ReactText, currentItem: TableListItem) => {
     if (key === 'edit') showEditModal(currentItem);
     else if (key === 'delete') {
       Modal.confirm({
-        title: '删除任务',
-        content: '确定删除该任务吗？',
+        title: '删除用户',
+        content: '确定删除该用户吗？',
         okText: '确认',
         cancelText: '取消',
         onOk: () => handleRemove(Object.values(currentItem)),
@@ -203,7 +196,7 @@ const TableList: React.FC<{}> = () => {
             <PlusOutlined /> 新建
           </Button>,
         ]}
-        request={(params, sorter, filter) => queryRule({ ...params, sorter, filter })}
+        request={(params, sorter, filter) => queryUser({ ...params, sorter, filter })}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => setSelectedRows(selectedRows),

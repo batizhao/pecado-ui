@@ -1,11 +1,11 @@
 export interface TableListItem {
   id: number;
   username: string;
-  avatar: string;
+  avatar?: string;
   name: string;
   email: string;
-  locked: number;
-  createdTime: Date;
+  locked?: number;
+  createdTime?: Date;
 }
 
 export interface TableListPagination {

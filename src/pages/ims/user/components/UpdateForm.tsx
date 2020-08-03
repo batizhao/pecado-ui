@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Modal, Input, Button } from 'antd';
+import { Form, Modal, Input } from 'antd';
 import { TableListItem } from '../data';
 
 interface UpdateFormProps {
-  onCancel: (flag?: boolean, formVals?: Partial<TableListItem>) => void;
+  onCancel: (formVals?: Partial<TableListItem>) => void;
   onSubmit: (values: Partial<TableListItem>) => void;
   updateModalVisible: boolean;
-  values: TableListItem;
-}
-
-export interface UpdateFormState {
-  formVals: Partial<TableListItem>;
+  values: Partial<TableListItem>;
 }
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
@@ -36,7 +32,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     }
   }, [props.values]);
 
-  const handleNext = async () => {
+  const handleSubmit = async () => {
     const fieldsValue = await form.validateFields();
 
     setFormVals({ ...formVals, ...fieldsValue });
@@ -76,23 +72,12 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     );
   }
 
-  const renderFooter = () => {
-    return (
-      <>
-        <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
-        <Button type="primary" onClick={() => handleNext()}>
-          完成
-        </Button>
-      </>
-    );
-  };
-
   return (
     <Modal
       destroyOnClose
       title="编辑用户"
       visible={updateModalVisible}
-      footer={renderFooter()}
+      onOk={() => handleSubmit()}
       onCancel={() => handleUpdateModalVisible()}
     >
       {renderContent()}

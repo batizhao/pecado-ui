@@ -59,7 +59,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
     hide();
     message.success('删除成功，即将刷新');
     return true;
-  } catch (error) {
+  } catch (error) {    
     hide();
     message.error('删除失败，请重试');
     return false;
@@ -86,7 +86,10 @@ const TableList: React.FC<{}> = () => {
         content: '确定删除该用户吗？',
         okText: '确认',
         cancelText: '取消',
-        onOk: () => handleRemove(Object.values(currentItem)),
+        onOk: () => {
+          handleRemove([currentItem]);
+          actionRef.current?.reloadAndRest();
+        }
       });
     }
   };

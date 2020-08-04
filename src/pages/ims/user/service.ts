@@ -8,7 +8,7 @@ export async function queryUser(params?: TableListParams) {
 }
 
 export async function removeUser(params: { id: number[] }) {
-  return request('/api/ims/user', {
+  return request(`/api/ims/user/${params.id}`, {
     method: 'DELETE',
     data: {
       ...params,
@@ -21,7 +21,6 @@ export async function addOrUpdateUser(params: TableListItem) {
     method: 'POST',
     data: {
       ...params,
-      method: 'post',
     },
   });
 }

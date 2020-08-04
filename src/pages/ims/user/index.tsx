@@ -233,7 +233,7 @@ const TableList: React.FC<{}> = () => {
             if (success) {
               handleModalVisible(false);
               if (actionRef.current) {
-                actionRef.current.reload();
+                actionRef.current.reloadAndRest();
               }
             }
           }}
@@ -251,7 +251,7 @@ const TableList: React.FC<{}> = () => {
               handleUpdateModalVisible(false);
               setStepFormValues({});
               if (actionRef.current) {
-                actionRef.current.reload();
+                actionRef.current.reloadAndRest();
               }
             }
           }}

@@ -8,11 +8,8 @@ export async function queryUser(params?: TableListParams) {
 }
 
 export async function removeUser(params: { id: number[] }) {
-  return request(`/api/ims/user/${params.id}`, {
+  return request(`/api/ims/user?ids=${params.id}`, {
     method: 'DELETE',
-    data: {
-      ...params,
-    },
   });
 }
 

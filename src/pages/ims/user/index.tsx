@@ -246,7 +246,7 @@ const TableList: React.FC<{}> = () => {
       {stepFormValues && Object.keys(stepFormValues).length ? (
         <UpdateForm
           onSubmit={async (value) => {
-            const success = await handleUpdate(value);
+            const success = await handleUpdate(value as TableListItem);
             if (success) {
               handleUpdateModalVisible(false);
               setStepFormValues({});

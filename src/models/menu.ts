@@ -1,16 +1,11 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 
-import {  fetchCurrent } from '@/services/menu';
-
-export interface MenuItem {
-  path?: string;
-  name?: string;
-  children?: MenuItem[];
-}
+import { fetchCurrent } from '@/services/menu';
+import { MenuDataItem } from '@ant-design/pro-layout';
 
 export interface MenuModelState {
-  currentMenu?: MenuItem[];
+  currentMenu?: MenuDataItem[];
 }
 
 export interface MenuModelType {

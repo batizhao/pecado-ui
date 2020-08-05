@@ -10,7 +10,7 @@ import ProLayout, {
   DefaultFooter,
 } from '@ant-design/pro-layout';
 import React, { useEffect } from 'react';
-import { Link, useIntl, connect, Dispatch, history } from 'umi';
+import { Link, connect, Dispatch, history } from 'umi';
 import {
   DashboardOutlined,
   SettingOutlined,
@@ -23,18 +23,13 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
+
 const IconMap = {
   dashboard: <DashboardOutlined />,
   setting: <SettingOutlined />,
   user: <UserOutlined />,
 };
 
-const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] =>
-  menus.map(({ icon, children, ...item }) => ({
-    ...item,
-    icon: icon && IconMap[icon as string],
-    children: children && loopMenuItem(children),
-  }));
 const noMatch = (
   <Result
     status={403}
@@ -66,11 +61,11 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
 /**
  * use Authorized check all menu item
  */
-
 const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
-  menuList.map((item) => {
+  menuList.map(({icon, ...item}) => {
     const localItem = {
       ...item,
+      icon: icon && IconMap[icon as string],
       children: item.children ? menuDataRender(item.children) : undefined,
     };
     return Authorized.check(item.authority, localItem, null) as MenuDataItem;
@@ -142,7 +137,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,
   };
-  const {} = useIntl();
   return (
     <ProLayout
       logo={logo}
@@ -171,7 +165,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
         );
       }}
       footerRender={() => defaultFooterDom}
-      menuDataRender={() => loopMenuItem(currentMenu)}
+      menuDataRender={() => menuDataRender(currentMenu)}
       rightContentRender={() => <RightContent />}
       {...props}
       {...settings}

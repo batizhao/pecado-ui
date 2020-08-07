@@ -6,7 +6,7 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import { TableListItem } from './data';
+import { TableListItem, TableListParams } from './data';
 import { queryUser, addOrUpdateUser, removeUser } from './service';
 
 /**
@@ -188,6 +188,15 @@ const TableList: React.FC<{}> = () => {
     },
   ];
 
+  const fetchData = async (fields: TableListParams) => {
+    const result = await queryUser({ ...fields });
+    return {
+      data: result.data.records,
+      total: result.data.total,
+      current: result.data.current,
+    }
+  }
+
   return (
     <PageContainer>
       <ProTable<TableListItem>
@@ -199,10 +208,13 @@ const TableList: React.FC<{}> = () => {
             <PlusOutlined /> 新建
           </Button>,
         ]}
-        request={(params, sorter, filter) => queryUser({ ...params, sorter, filter })}
+        request={fetchData}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => setSelectedRows(selectedRows),
+        }}
+        pagination={{
+          defaultPageSize: 10
         }}
       />
       {selectedRowsState?.length > 0 && (

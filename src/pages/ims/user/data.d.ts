@@ -8,16 +8,16 @@ export interface TableListItem {
   createdTime?: Date;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
+// export interface TableListPagination {
+//   total: number;
+//   pageSize: number;
+//   current: number;
+// }
 
-export interface TableListData {
-  list: TableListItem[];
-  pagination: Partial<TableListPagination>;
-}
+// export interface TableListData {
+//   list: TableListItem[];
+//   pagination: Partial<TableListPagination>;
+// }
 
 export interface TableListParams {
   locked?: number;
@@ -25,7 +25,7 @@ export interface TableListParams {
   username?: string;
   email?: string;
   pageSize?: number;
-  currentPage?: number;
+  current?: number;
   filter?: { [key: string]: any[] };
   sorter?: { [key: string]: any };
 }

@@ -5,7 +5,7 @@ export async function query(): Promise<any> {
 }
 
 export async function queryCurrent(): Promise<any> {
-  return request('/api/ims/user/info');
+  return request('/api/ims/user/me');
 }
 
 export async function queryNotices(): Promise<any> {

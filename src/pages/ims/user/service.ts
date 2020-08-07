@@ -2,7 +2,7 @@ import request from '@/utils/request';
 import { TableListParams, TableListItem } from './data';
 
 export async function queryUser(params?: TableListParams) {
-  return request('/api/ims/user', {
+  return request('/api/ims/users', {
     params,
   });
 }

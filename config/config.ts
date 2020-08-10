@@ -2,9 +2,7 @@
 import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-
 const { REACT_APP_ENV } = process.env;
-
 export default defineConfig({
   hash: true,
   antd: {},
@@ -70,11 +68,11 @@ export default defineConfig({
                   name: '角色管理',
                   component: './ims/user',
                 },
-                {
-                  path: '/ims/menu',
-                  name: '菜单管理',
-                  component: './ims/user',
-                },
+                // {
+                //   path: '/ims/menu',
+                //   name: '菜单管理',
+                //   component: './ims/menu',
+                // },
               ],
             },
             {
@@ -87,6 +85,12 @@ export default defineConfig({
                   component: './Admin',
                 },
               ],
+            },
+            {
+              name: '个人中心',
+              icon: 'smile',
+              path: '/accountcenter',
+              component: './AccountCenter',
             },
             {
               component: './404',

@@ -68,11 +68,6 @@ export default defineConfig({
                   name: '角色管理',
                   component: './ims/user',
                 },
-                // {
-                //   path: '/ims/menu',
-                //   name: '菜单管理',
-                //   component: './ims/menu',
-                // },
               ],
             },
             {
@@ -91,6 +86,12 @@ export default defineConfig({
               icon: 'smile',
               path: '/accountcenter',
               component: './AccountCenter',
+            },
+            {
+              name: '个人设置',
+              icon: 'smile',
+              path: '/accountsettings',
+              component: './AccountSettings',
             },
             {
               component: './404',

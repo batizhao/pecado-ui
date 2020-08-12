@@ -7,7 +7,7 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import { TableListItem, TableListParams } from './data';
-import { queryUser, addOrUpdateUser, removeUser } from './service';
+import { queryRole, addOrUpdateRole, removeRole } from './service';
 
 /**
  * 添加节点
@@ -16,7 +16,7 @@ import { queryUser, addOrUpdateUser, removeUser } from './service';
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    await addOrUpdateUser({ ...fields });
+    await addOrUpdateRole({ ...fields });
     hide();
     message.success('添加成功');
     return true;
@@ -34,7 +34,7 @@ const handleAdd = async (fields: TableListItem) => {
 const handleUpdate = async (fields: TableListItem) => {
   const hide = message.loading('正在编辑');
   try {
-    await addOrUpdateUser({ ...fields });
+    await addOrUpdateRole({ ...fields });
     hide();
     message.success('编辑成功');
     return true;
@@ -53,7 +53,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeUser({
+    await removeRole({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -82,8 +82,8 @@ const TableList: React.FC<{}> = () => {
     if (key === 'edit') showEditModal(currentItem);
     else if (key === 'delete') {
       Modal.confirm({
-        title: '删除用户',
-        content: `确定删除用户 ${currentItem.name} 吗？`,
+        title: '删除角色',
+        content: `确定删除角色 ${currentItem.name} 吗？`,
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
@@ -113,60 +113,30 @@ const TableList: React.FC<{}> = () => {
 
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '姓名',
+      title: '名称',
       dataIndex: 'name',
       rules: [
         {
           required: true,
-          message: '姓名为必填项',
+          message: '名称为必填项',
         },
       ],
     },
     {
-      title: '用户名',
-      dataIndex: 'username',
+      title: '代码',
+      dataIndex: 'code',
       rules: [
         {
           required: true,
-          message: '用户名为必填项',
+          message: '代码为必填项',
         },
       ],
     },
     {
-      title: '邮箱',
-      dataIndex: 'email',
-      rules: [
-        {
-          required: true,
-          type: 'email',
-          message: '邮箱为必填项',
-        },
-      ],    
-    },
-    {
-      title: '状态',
-      dataIndex: 'locked',
-      hideInForm: true,
-      valueEnum: {
-        0: { text: '正常', status: 'Success' },
-        1: { text: '禁用', status: 'Error' },
-      },
-    },
-    {
-      title: '注册时间',
+      title: '创建时间',
       dataIndex: 'createdTime',
       valueType: 'dateTime',
       hideInForm: true,
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const locked = form.getFieldValue('locked');
-        if (`${locked}` === '0') {
-          return false;
-        }
-        if (`${locked}` === '1') {
-          return <Input {...rest} placeholder="请输入禁用原因！" />;
-        }
-        return defaultRender(item);
-      },
     },
     {
       title: '操作',
@@ -188,12 +158,10 @@ const TableList: React.FC<{}> = () => {
     },
   ];
 
-  const fetchData = async (fields: TableListParams) => {
-    const result = await queryUser({ ...fields });
+  const fetchData = async () => {
+    const result = await queryRole();
     return {
-      data: result.data.records,
-      total: result.data.total,
-      current: result.data.current,
+      data: result.data,
     }
   }
 
@@ -213,9 +181,7 @@ const TableList: React.FC<{}> = () => {
         rowSelection={{
           onChange: (_, selectedRows) => setSelectedRows(selectedRows),
         }}
-        pagination={{
-          defaultPageSize: 10
-        }}
+        pagination={false}
       />
       {selectedRowsState?.length > 0 && (
         <FooterToolbar

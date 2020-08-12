@@ -66,7 +66,7 @@ export default defineConfig({
                 {
                   path: '/ims/role',
                   name: '角色管理',
-                  component: './ims/user',
+                  component: './ims/role',
                 },
                 {
                   path: '/ims/menu',

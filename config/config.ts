@@ -68,6 +68,11 @@ export default defineConfig({
                   name: '角色管理',
                   component: './ims/user',
                 },
+                {
+                  path: '/ims/menu',
+                  name: '菜单管理',
+                  component: './ims/menu',
+                },
               ],
             },
             {

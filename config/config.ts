@@ -82,7 +82,7 @@ export default defineConfig({
                 {
                   path: '/system/log',
                   name: '日志管理',
-                  component: './Admin',
+                  component: './system/log',
                 },
               ],
             },

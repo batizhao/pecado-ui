@@ -1,14 +1,18 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState, ReactText }  from 'react';
 import {
   Card,
   Col,
   Input,
-  List,
   Radio,
   Row,
+  Tag, 
+  Space,
+  Button,
+  List, Avatar, Skeleton
 } from 'antd';
 
 import { PageContainer } from '@ant-design/pro-layout';
+import ProList from '@ant-design/pro-list';
 import { connect, Dispatch } from 'umi';
 import moment from 'moment';
 import { StateType } from './model';
@@ -21,7 +25,7 @@ const { Search } = Input;
 
 interface ListBasicListProps {
   listBasicList: StateType;
-  dispatch: Dispatch<any>;
+  dispatch: Dispatch<any>;  
   loading: boolean;
 }
 
@@ -37,37 +41,15 @@ const Info: FC<{
   </div>
 );
 
-const ListContent = ({
-  data: { description, createdTime, parameter, httpRequestMethod, clientId, username, ip, url, spend },
-}: {
-  data: BasicListItemDataType;
-}) => (
-  <div className={styles.listContent}>
-    <div className={styles.listContentItem}>
-      <span>{description}</span>
-      <p>{httpRequestMethod}</p>
-    </div>
-    <div className={styles.listContentItem}>
-      <span>{moment(createdTime).format('YYYY-MM-DD HH:mm')}</span>
-      <p>耗时 {spend}ms</p>
-    </div>
-    <div className={styles.listContentItem}>
-      <span>{clientId}</span>
-      <p>{username}</p>
-    </div>
-    <div className={styles.listContentItem}>
-      <span>调用 IP</span>
-      <p>{ip}</p>
-    </div>
-  </div>
-);
-
 export const ListBasicList: FC<ListBasicListProps> = (props) => {
   const {
+    // initLoading,
     loading,
     dispatch,
-    listBasicList: { list, current, total },
+    listBasicList: { list, current },
   } = props;
+
+  const [expandedRowKeys, setExpandedRowKeys] = useState<ReactText[]>([]);
 
   useEffect(() => {
     dispatch({
@@ -76,13 +58,33 @@ export const ListBasicList: FC<ListBasicListProps> = (props) => {
         current: current,
       },
     });
-  }, [1]);
+  },[1]);
 
-  const paginationProps = {
-    // showSizeChanger: true,
-    // showQuickJumper: true,
-    pageSize: 10,
+  const onLoadMore = () => {
+    dispatch({
+      type: 'listBasicList/appendFetch',
+      payload: {
+        current: current+1,
+      },
+      callback: () => {
+        window.dispatchEvent(new Event('resize'));
+      }
+    });
   };
+  
+  const loadMore =
+      !loading ? (
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: 12,
+            height: 32,
+            lineHeight: '32px',
+          }}
+        >
+          <Button onClick={onLoadMore}>loading more</Button>
+        </div>
+      ) : null;
 
   const extraContent = (
     <div className={styles.extraContent}>
@@ -122,18 +124,30 @@ export const ListBasicList: FC<ListBasicListProps> = (props) => {
             extra={extraContent}
           >
             <List
-              size="large"
-              rowKey="id"
+              className={styles.listCard}
+              itemLayout="vertical"
               loading={loading}
-              pagination={paginationProps}
+              loadMore={loadMore}
               dataSource={list}
-              renderItem={(item) => (
+              renderItem={item => (
                 <List.Item>
-                  <List.Item.Meta
-                    title={item.classMethod}
-                    description={item.className}
-                  />
-                  <ListContent data={item} />
+                  <Skeleton avatar title={false} loading={item.loading} active>
+                    <List.Item.Meta
+                      title={<a href="https://ant.design"> {item.classMethod} <Space size={0}>
+                            <Tag color="blue">{item.description}</Tag>
+                            <Tag color="#5BD8A6">{item.httpRequestMethod}</Tag>
+                            <Tag color="green">{item.clientId}</Tag>
+                            <Tag color="purple">{item.username}</Tag>
+                            <Tag color="geekblue">{item.ip}</Tag>
+                            <Tag color="orange">{item.createdTime}</Tag>
+                            <Tag color="pink">{item.spend}ms</Tag>
+                            <Tag color="geekblue">{item.url}</Tag>
+                          </Space>
+                        </a>}
+                      description={item.id}
+                    />
+                    <div>ResponseInfo(code=0, message=ok, data=UserInfoVO(userVO=UserVO(id=1, username=admin, password=$2a$10$rFoOrbWD2p.1CjBoBqTeaOUgpxFmtZknsDEvF78AsMXvsxU1AyAZu, email=admin@qq.com, name=系统管理员, avatar=https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png, unreadCount=0, locked=0, createdTime=2016-09-29T10:00, roleList=null), permissions=null, roles=null))</div>
+                  </Skeleton>
                 </List.Item>
               )}
             />

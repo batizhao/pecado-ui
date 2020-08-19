@@ -4,10 +4,11 @@ import { queryFakeList } from './service';
 import { BasicListItemDataType } from './data.d';
 
 export interface StateType {
-  list: BasicListItemDataType[];
-  // size?: number;
-  current?: number;
-  total?: number;
+  list: BasicListItemDataType[],
+  current: number
+  // initLoading: boolean,
+  // loading: boolean,
+  // data: BasicListItemDataType[],
 }
 
 export interface ModelType {
@@ -29,8 +30,10 @@ const Model: ModelType = {
 
   state: {
     list: [],
-    total: 800,
-    current: 1
+    current: 1,
+    // initLoading: true,
+    // loading: false,
+    // data: [],
   },
 
   effects: {
@@ -68,12 +71,15 @@ const Model: ModelType = {
       return {
         ...state,
         list: action.payload.data.records,
+        current: action.payload.data.current,
+        // data: action.payload.data.records,
       };
     },
     appendList(state = { list: [] }, action) {
       return {
         ...state,
         list: state.list.concat(action.payload.data.records),
+        current: action.payload.data.current,
       };
     },
   },

@@ -8,7 +8,7 @@ import { ModalState } from './model';
 import Projects from './components/Projects';
 import Articles from './components/Articles';
 import Applications from './components/Applications';
-import { CurrentUser, TagType } from './data.d';
+import { CurrentUser, TagType } from './data';
 import styles from './Center.less';
 
 const operationTabList = [

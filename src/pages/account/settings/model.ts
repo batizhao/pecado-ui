@@ -1,5 +1,5 @@
 import { Effect, Reducer } from 'umi';
-import { CurrentUser, GeographicItemType } from './data.d';
+import { CurrentUser, GeographicItemType } from './data';
 import { queryCity, queryCurrent, queryProvince, query as queryUsers } from './service';
 
 export interface ModalState {

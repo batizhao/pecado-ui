@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Select, Spin } from 'antd';
 import { LabeledValue } from 'antd/es/select';
 import { connect, Dispatch } from 'umi';
-import { GeographicItemType } from '../data.d';
+import { GeographicItemType } from '../data';
 import styles from './GeographicView.less';
 
 const { Option } = Select;

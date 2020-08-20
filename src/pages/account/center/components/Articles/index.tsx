@@ -4,7 +4,7 @@ import React from 'react';
 
 import { connect } from 'umi';
 import ArticleListContent from '../ArticleListContent';
-import { ListItemDataType } from '../../data.d';
+import { ListItemDataType } from '../../data';
 import { ModalState } from '../../model';
 import styles from './index.less';
 

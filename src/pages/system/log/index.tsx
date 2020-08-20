@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, ReactText }  from 'react';
+import React, { FC, useEffect }  from 'react';
 import {
   Card,
   Col,
@@ -8,15 +8,13 @@ import {
   Tag, 
   Space,
   Button,
-  List, Avatar, Skeleton
+  List, 
+  Skeleton
 } from 'antd';
 
 import { PageContainer } from '@ant-design/pro-layout';
-import ProList from '@ant-design/pro-list';
 import { connect, Dispatch } from 'umi';
-import moment from 'moment';
 import { StateType } from './model';
-import { BasicListItemDataType } from './data.d';
 import styles from './style.less';
 
 const RadioButton = Radio.Button;
@@ -43,19 +41,16 @@ const Info: FC<{
 
 export const ListBasicList: FC<ListBasicListProps> = (props) => {
   const {
-    // initLoading,
     loading,
     dispatch,
-    listBasicList: { list, current },
+    listBasicList: { list, current, total },
   } = props;
-
-  const [expandedRowKeys, setExpandedRowKeys] = useState<ReactText[]>([]);
 
   useEffect(() => {
     dispatch({
       type: 'listBasicList/fetch',
       payload: {
-        current: current,
+        current: 1,
       },
     });
   },[1]);
@@ -73,7 +68,7 @@ export const ListBasicList: FC<ListBasicListProps> = (props) => {
   };
   
   const loadMore =
-      !loading ? (
+      !loading && list.length != total ? (
         <div
           style={{
             textAlign: 'center',
@@ -84,7 +79,7 @@ export const ListBasicList: FC<ListBasicListProps> = (props) => {
         >
           <Button onClick={onLoadMore}>loading more</Button>
         </div>
-      ) : null;
+      ) : null ;
 
   const extraContent = (
     <div className={styles.extraContent}>
@@ -131,9 +126,9 @@ export const ListBasicList: FC<ListBasicListProps> = (props) => {
               dataSource={list}
               renderItem={item => (
                 <List.Item>
-                  <Skeleton avatar title={false} loading={item.loading} active>
+                  <Skeleton avatar title={false} loading={loading} active>
                     <List.Item.Meta
-                      title={<a href="https://ant.design"> {item.classMethod} <Space size={0}>
+                      title={<a> {item.id}. {item.classMethod} <Space size={0}>
                             <Tag color="blue">{item.description}</Tag>
                             <Tag color="#5BD8A6">{item.httpRequestMethod}</Tag>
                             <Tag color="green">{item.clientId}</Tag>
@@ -144,9 +139,9 @@ export const ListBasicList: FC<ListBasicListProps> = (props) => {
                             <Tag color="geekblue">{item.url}</Tag>
                           </Space>
                         </a>}
-                      description={item.id}
+                      description={item.parameter}
                     />
-                    <div>ResponseInfo(code=0, message=ok, data=UserInfoVO(userVO=UserVO(id=1, username=admin, password=$2a$10$rFoOrbWD2p.1CjBoBqTeaOUgpxFmtZknsDEvF78AsMXvsxU1AyAZu, email=admin@qq.com, name=系统管理员, avatar=https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png, unreadCount=0, locked=0, createdTime=2016-09-29T10:00, roleList=null), permissions=null, roles=null))</div>
+                    <div>{item.result}</div>
                   </Skeleton>
                 </List.Item>
               )}

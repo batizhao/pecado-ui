@@ -5,10 +5,8 @@ import { BasicListItemDataType } from './data.d';
 
 export interface StateType {
   list: BasicListItemDataType[],
-  current: number
-  // initLoading: boolean,
-  // loading: boolean,
-  // data: BasicListItemDataType[],
+  current: number,
+  total: number,
 }
 
 export interface ModelType {
@@ -31,9 +29,7 @@ const Model: ModelType = {
   state: {
     list: [],
     current: 1,
-    // initLoading: true,
-    // loading: false,
-    // data: [],
+    total: 0,
   },
 
   effects: {
@@ -72,6 +68,7 @@ const Model: ModelType = {
         ...state,
         list: action.payload.data.records,
         current: action.payload.data.current,
+        total: action.payload.data.total,
         // data: action.payload.data.records,
       };
     },
@@ -80,6 +77,7 @@ const Model: ModelType = {
         ...state,
         list: state.list.concat(action.payload.data.records),
         current: action.payload.data.current,
+        total: action.payload.data.total,
       };
     },
   },

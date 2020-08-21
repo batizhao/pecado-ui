@@ -7,6 +7,7 @@ import { ConnectState } from '@/models/connect';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
+import NoticeIconView from './NoticeIconView';
 
 export interface GlobalHeaderRightProps extends Partial<ConnectProps>, Partial<ProSettings> {
   theme?: ProSettings['navTheme'] | 'realDark';
@@ -64,7 +65,8 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = (props) => {
           <QuestionCircleOutlined />
         </a>
       </Tooltip>
-      <Avatar />
+      <NoticeIconView />
+      <Avatar menu />
       {REACT_APP_ENV && (
         <span>
           <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { FormattedMessage, Dispatch, connect } from 'umi';
+import { Dispatch, connect } from 'umi';
 import { GridContent } from '@ant-design/pro-layout';
 import { Menu } from 'antd';
 import BaseView from './components/base';
 import BindingView from './components/binding';
-import { CurrentUser } from './data';
+import { CurrentUser } from '@/models/user';
 import NotificationView from './components/notification';
 import SecurityView from './components/security';
 import styles from './style.less';
@@ -28,10 +28,10 @@ class AccountSettings extends Component<AccountSettingsProps, AccountSettingsSta
   constructor(props: AccountSettingsProps) {
     super(props);
     const menuMap = {
-      base: 'Basic Settings',
-      security: 'Security Settings',
-      binding: 'Account Binding',
-      notification: 'New Message Notification',
+      base: '基本设置',
+      security: '安全设置',
+      binding: '账号绑定',
+      notification: '消息设置',
     };
     this.state = {
       mode: 'inline',
@@ -118,7 +118,7 @@ class AccountSettings extends Component<AccountSettingsProps, AccountSettingsSta
   render() {
     const { currentUser } = this.props;
 
-    if (!currentUser.userid) {
+    if (!currentUser.id) {
       return '';
     }
 

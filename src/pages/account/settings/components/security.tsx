@@ -1,44 +1,38 @@
-import { FormattedMessage, formatMessage } from 'umi';
 import React, { Component } from 'react';
 import { List } from 'antd';
 type Unpacked<T> = T extends (infer U)[] ? U : T;
 const passwordStrength = {
-  strong: <span className="strong">Strong</span>,
-  medium: <span className="medium">Medium</span>,
-  weak: <span className="weak">Weak Weak</span>,
+  strong: <span className="strong">强</span>,
+  medium: <span className="medium">中</span>,
+  weak: <span className="weak">弱</span>,
 };
 
 class SecurityView extends Component {
   getData = () => [
     {
-      title: 'accountsettings.security.password',
+      title: '账户密码',
       description: (
         <>
-          'accountsettings.security.password-description'：
+          当前密码强度：
           {passwordStrength.strong}
         </>
       ),
       actions: [<a key="Modify">Modify</a>],
     },
     {
-      title: 'accountsettings.security.phone',
-      description: `${'accountsettings.security.phone-description'}：138****8293`,
+      title: '密保手机',
+      description: '已绑定手机：138****8293',
       actions: [<a key="Modify">Modify</a>],
     },
     {
-      title: 'accountsettings.security.question',
-      description: 'accountsettings.security.question-description',
+      title: '密保问题',
+      description: '未设置密保问题，密保问题可有效保护账户安全',
       actions: [<a key="Set">Set</a>],
     },
     {
-      title: 'accountsettings.security.email',
-      description: `${'accountsettings.security.email-description'}：ant***sign.com`,
+      title: '备用邮箱',
+      description: '已绑定邮箱：ant***sign.com',
       actions: [<a key="Modify">Modify</a>],
-    },
-    {
-      title: 'accountsettings.security.mfa',
-      description: 'accountsettings.security.mfa-description',
-      actions: [<a key="bind">Bind</a>],
     },
   ];
 

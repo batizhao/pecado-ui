@@ -1,6 +1,7 @@
 import { Reducer, Effect } from 'umi';
-import { CurrentUser, ListItemDataType } from './data';
+import { ListItemDataType } from './data';
 import { queryCurrent, queryFakeList } from './service';
+import { CurrentUser } from '@/models/user';
 
 export interface ModalState {
   currentUser: Partial<CurrentUser>;
@@ -49,7 +50,7 @@ const Model: ModelType = {
     saveCurrentUser(state, action) {
       return {
         ...(state as ModalState),
-        currentUser: action.payload || {},
+        currentUser: action.payload.data.userVO || {},
       };
     },
     queryList(state, action) {

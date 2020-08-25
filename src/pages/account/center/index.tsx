@@ -1,4 +1,4 @@
-import { PlusOutlined, HomeOutlined, ContactsOutlined, ClusterOutlined } from '@ant-design/icons';
+import { PlusOutlined, ContactsOutlined, ClusterOutlined } from '@ant-design/icons';
 import { Avatar, Card, Col, Divider, Input, Row, Tag } from 'antd';
 import React, { Component, useState, useRef } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
@@ -8,12 +8,13 @@ import { ModalState } from './model';
 import Projects from './components/Projects';
 import Articles from './components/Articles';
 import Applications from './components/Applications';
-import { CurrentUser, TagType } from './data';
+import { TagType } from './data';
+import { CurrentUser } from '@/models/user';
 import styles from './Center.less';
 
 const operationTabList = [
   {
-    key: 'articles',
+    key: '文章',
     tab: (
       <span>
         文章 <span style={{ fontSize: 14 }}>(8)</span>
@@ -21,7 +22,7 @@ const operationTabList = [
     ),
   },
   {
-    key: 'applications',
+    key: '应用',
     tab: (
       <span>
         应用 <span style={{ fontSize: 14 }}>(8)</span>
@@ -29,7 +30,7 @@ const operationTabList = [
     ),
   },
   {
-    key: 'projects',
+    key: '项目',
     tab: (
       <span>
         项目 <span style={{ fontSize: 14 }}>(8)</span>
@@ -170,7 +171,7 @@ class AccountCenter extends Component<
             marginRight: 8,
           }}
         />
-        {currentUser.title}
+        {currentUser.username}
       </p>
       <p>
         <ClusterOutlined
@@ -178,24 +179,7 @@ class AccountCenter extends Component<
             marginRight: 8,
           }}
         />
-        {currentUser.group}
-      </p>
-      <p>
-        <HomeOutlined
-          style={{
-            marginRight: 8,
-          }}
-        />
-        {(currentUser.geographic || { province: { label: '' } }).province.label}
-        {
-          (
-            currentUser.geographic || {
-              city: {
-                label: '',
-              },
-            }
-          ).city.label
-        }
+        {currentUser.email}
       </p>
     </div>
   );
@@ -214,12 +198,12 @@ class AccountCenter extends Component<
                   <div className={styles.avatarHolder}>
                     <img alt="" src={currentUser.avatar} />
                     <div className={styles.name}>{currentUser.name}</div>
-                    <div>{currentUser.signature}</div>
+                    {/* <div>{currentUser.signature}</div> */}
                   </div>
                   {this.renderUserInfo(currentUser)}
                   <Divider dashed />
-                  <TagList tags={currentUser.tags || []} />
-                  <Divider style={{ marginTop: 16 }} dashed />
+                  {/* <TagList tags={currentUser.tags || []} /> */}
+                  {/* <Divider style={{ marginTop: 16 }} dashed />
                   <div className={styles.team}>
                     <div className={styles.teamTitle}>团队</div>
                     <Row gutter={36}>
@@ -233,7 +217,7 @@ class AccountCenter extends Component<
                           </Col>
                         ))}
                     </Row>
-                  </div>
+                  </div> */}
                 </div>
               )}
             </Card>

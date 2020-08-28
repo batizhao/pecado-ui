@@ -1,13 +1,15 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, message, Input, Modal, Dropdown, Menu } from 'antd';
+import { Button, Divider, message, Modal, Dropdown, Menu } from 'antd';
 import React, { useState, useRef, ReactText } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import { TableListItem, TableListParams } from './data';
+import MenuForm from './components/MenuForm';
+import { TableListItem } from './data';
 import { queryRole, addOrUpdateRole, removeRole } from './service';
+import { fetchByRoleId } from '@/services/menu';
 
 /**
  * 添加节点
@@ -66,20 +68,50 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   }
 };
 
+/**
+ *  获取角色默认菜单
+ * @param roleId
+ */
+const fetchRoleMenuData = async (roleId: number) => {
+  try {
+    const result = await fetchByRoleId(roleId);
+    const data = result.data;
+    const value = data.map((row: { permission: string; }) => row.permission);
+    return value;
+  } catch (error) {
+    message.error('加载失败，请重试');    
+    return false;
+  }
+};
+
 const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [stepFormValues, setStepFormValues] = useState({});
+  const [menuModalVisible, handleMenuModalVisible] = useState<boolean>(false);
+  const [updateFormValues, setUpdateFormValues] = useState({});
+  const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const actionRef = useRef<ActionType>();
   const [selectedRowsState, setSelectedRows] = useState<TableListItem[]>([]);
 
   const showEditModal = (item: TableListItem) => {
     handleUpdateModalVisible(true);
-    setStepFormValues(item);
+    setUpdateFormValues(item);
   };
 
+  const showMenuModal = async (id: number) => {
+    handleMenuModalVisible(true);
+    fetchRoleMenuData(id).then(result => setCheckedValues(result));
+  };
+
+  const fetchData = async () => {
+    const result = await queryRole();
+    return {
+      data: result.data,
+    }
+  }
+
   const editAndDelete = (key: ReactText, currentItem: TableListItem) => {
-    if (key === 'edit') showEditModal(currentItem);
+    if (key === 'menu') showMenuModal(currentItem.id);
     else if (key === 'delete') {
       Modal.confirm({
         title: '删除角色',
@@ -88,7 +120,7 @@ const TableList: React.FC<{}> = () => {
         cancelText: '取消',
         onOk: () => {
           handleRemove([currentItem]);
-          actionRef.current?.reloadAndRest();
+          actionRef.current?.reloadAndRest;
         }
       });
     }
@@ -100,7 +132,7 @@ const TableList: React.FC<{}> = () => {
     <Dropdown
       overlay={
         <Menu onClick={({ key }) => editAndDelete(key, item)}>
-          <Menu.Item key="edit">编辑</Menu.Item>
+          <Menu.Item key="menu">分配权限</Menu.Item>
           <Menu.Item key="delete">删除</Menu.Item>
         </Menu>
       }
@@ -158,13 +190,6 @@ const TableList: React.FC<{}> = () => {
     },
   ];
 
-  const fetchData = async () => {
-    const result = await queryRole();
-    return {
-      data: result.data,
-    }
-  }
-
   return (
     <PageContainer>
       <ProTable<TableListItem>
@@ -195,7 +220,7 @@ const TableList: React.FC<{}> = () => {
             onClick={async () => {
               await handleRemove(selectedRowsState);
               setSelectedRows([]);
-              actionRef.current?.reloadAndRest();
+              actionRef.current?.reloadAndRest;
             }}
           >
             批量删除
@@ -211,7 +236,7 @@ const TableList: React.FC<{}> = () => {
             if (success) {
               handleModalVisible(false);
               if (actionRef.current) {
-                actionRef.current.reloadAndRest();
+                actionRef.current.reloadAndRest;
               }
             }
           }}
@@ -221,26 +246,45 @@ const TableList: React.FC<{}> = () => {
           rowSelection={{}}
         />
       </CreateForm>
-      {stepFormValues && Object.keys(stepFormValues).length ? (
+      {updateFormValues && Object.keys(updateFormValues).length ? (
         <UpdateForm
           onSubmit={async (value) => {
             const success = await handleUpdate(value as TableListItem);
             if (success) {
               handleUpdateModalVisible(false);
-              setStepFormValues({});
+              setUpdateFormValues({});
               if (actionRef.current) {
-                actionRef.current.reloadAndRest();
+                actionRef.current.reloadAndRest;
               }
             }
           }}
           onCancel={() => {
             handleUpdateModalVisible(false);
-            setStepFormValues({});
+            // setUpdateFormValues({});
           }}
           updateModalVisible={updateModalVisible}
-          values={stepFormValues}
+          values={updateFormValues}
         />
       ) : null}
+      {/* {checkedValues ? ( */}
+        <MenuForm
+          onSubmit={async (value) => {
+            const success = await fetchRoleMenuData(1);
+            if (success) {
+              handleMenuModalVisible(false);
+              if (actionRef.current) {
+                actionRef.current.reloadAndRest;
+              }
+            }
+          }}
+          onCancel={() => {
+            handleMenuModalVisible(false);
+            // setCheckedValues([]);
+          }}
+          modalVisible={menuModalVisible}
+          values={checkedValues}
+        />
+      {/* ) : null} */}
     </PageContainer>
   );
 };

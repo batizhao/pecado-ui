@@ -88,7 +88,7 @@ const TableList: React.FC<{}> = () => {
         cancelText: '取消',
         onOk: () => {
           handleRemove([currentItem]);
-          actionRef.current?.reloadAndRest();
+          actionRef.current?.reloadAndRest;
         }
       });
     }
@@ -229,7 +229,7 @@ const TableList: React.FC<{}> = () => {
             onClick={async () => {
               await handleRemove(selectedRowsState);
               setSelectedRows([]);
-              actionRef.current?.reloadAndRest();
+              actionRef.current?.reloadAndRest;
             }}
           >
             批量删除
@@ -245,7 +245,7 @@ const TableList: React.FC<{}> = () => {
             if (success) {
               handleModalVisible(false);
               if (actionRef.current) {
-                actionRef.current.reloadAndRest();
+                actionRef.current.reloadAndRest;
               }
             }
           }}
@@ -263,7 +263,7 @@ const TableList: React.FC<{}> = () => {
               handleUpdateModalVisible(false);
               setStepFormValues({});
               if (actionRef.current) {
-                actionRef.current.reloadAndRest();
+                actionRef.current.reloadAndRest;
               }
             }
           }}

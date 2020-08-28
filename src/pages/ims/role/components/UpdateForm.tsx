@@ -74,7 +74,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   return (
     <Modal
       destroyOnClose
-      title="编辑用户"
+      title="编辑角色"
       visible={updateModalVisible}
       onOk={() => handleSubmit()}
       onCancel={() => handleUpdateModalVisible()}

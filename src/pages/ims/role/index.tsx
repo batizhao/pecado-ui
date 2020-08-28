@@ -266,7 +266,7 @@ const TableList: React.FC<{}> = () => {
           values={updateFormValues}
         />
       ) : null}
-      {/* {checkedValues ? ( */}
+      {checkedValues ? (
         <MenuForm
           onSubmit={async (value) => {
             const success = await fetchRoleMenuData(1);
@@ -284,7 +284,7 @@ const TableList: React.FC<{}> = () => {
           modalVisible={menuModalVisible}
           values={checkedValues}
         />
-      {/* ) : null} */}
+      ) : null}
     </PageContainer>
   );
 };

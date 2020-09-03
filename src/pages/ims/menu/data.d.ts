@@ -5,26 +5,5 @@ export interface MenuTreeItem {
   key: string;
   isLeaf: boolean;
   children: MenuTreeItem[]|[];
+  type?: string;
 }
-
-// export interface TableListPagination {
-//   total: number;
-//   pageSize: number;
-//   current: number;
-// }
-
-// export interface TableListData {
-//   list: TableListItem[];
-//   pagination: Partial<TableListPagination>;
-// }
-
-// export interface TableListParams {
-//   locked?: number;
-//   name?: string;
-//   username?: string;
-//   email?: string;
-//   pageSize?: number;
-//   current?: number;
-//   filter?: { [key: string]: any[] };
-//   sorter?: { [key: string]: any };
-// }

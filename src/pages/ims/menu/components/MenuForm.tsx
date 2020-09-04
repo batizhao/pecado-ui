@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Form, Input, Radio, InputNumber, Button } from 'antd';
 import { MenuTreeItem } from '../../menu/data';
+import { connect, Dispatch } from 'umi';
 
 interface MenuFormProps {
   value?: MenuTreeItem;
+  submitting?: boolean;
+  dispatch: Dispatch;
 }
 
 const layout = {
@@ -11,8 +14,12 @@ const layout = {
   wrapperCol: { span: 14 },
 };
 
+const tailLayout = {
+  wrapperCol: { offset: 6, span: 14 },
+};
+
 const MenuForm: React.FC<MenuFormProps> = (props) => {
-  const { value } = props;
+  const { submitting, value } = props;
 
   const [form] = Form.useForm();
   const FormItem = Form.Item;
@@ -25,8 +32,22 @@ const MenuForm: React.FC<MenuFormProps> = (props) => {
     }
   }, [value]);
 
+  const onFinish = (values: { [key: string]: any }) => {
+    const { dispatch } = props;
+    dispatch({
+      type: 'ims_menu/submitForm',
+      payload: values,
+    });
+  };
+
+  const onReset = () => {
+    form.resetFields();
+  };
+
   return (
-    <Form {...layout} form={form} name="menu-form" initialValues={value}>
+    <Form {...layout} form={form} name="menu-form" initialValues={value} onFinish={onFinish}>
+      <FormItem name="id" hidden={true} />
+      <FormItem name="pid" hidden={true} />
       <FormItem name="name" label="菜单名" rules={[{ required: true }]}>
         <Input />
       </FormItem>
@@ -37,9 +58,9 @@ const MenuForm: React.FC<MenuFormProps> = (props) => {
         <Input />
       </FormItem>
       <FormItem name="type" label="类型">
-        <Radio.Group defaultValue={0}>
-          <Radio value={0}>菜单</Radio>
-          <Radio value={1}>按钮</Radio>
+        <Radio.Group value="1" defaultValue="0">
+          <Radio value="0">菜单</Radio>
+          <Radio value="1">按钮</Radio>
         </Radio.Group>
       </FormItem>
       <FormItem name="icon" label="图标">
@@ -51,13 +72,19 @@ const MenuForm: React.FC<MenuFormProps> = (props) => {
       <FormItem name="description" label="权限说明">
         <Input.TextArea />
       </FormItem>
-      <FormItem wrapperCol={{ ...layout.wrapperCol, offset: 6 }}>
-        <Button type="primary" htmlType="submit">
+
+      <FormItem {...tailLayout} style={{ marginTop: 32 }}>
+        <Button type="primary" htmlType="submit" loading={submitting}>
           Submit
+        </Button>
+        <Button htmlType="button" onClick={onReset} style={{ marginLeft: 8 }}>
+          Reset
         </Button>
       </FormItem>
     </Form>
   );
 };
 
-export default MenuForm;
+export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
+  submitting: loading.effects['ims_menu/submitForm'],
+}))(MenuForm);

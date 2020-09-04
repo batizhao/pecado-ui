@@ -1,11 +1,9 @@
 import React, { useState, useEffect, ReactText } from 'react';
-import { Tree, Card, Col, Row, Empty } from 'antd';
+import { Tree, Card, Col, Row } from 'antd';
 import { PageContainer, GridContent } from '@ant-design/pro-layout';
 import { queryMenuTree, queryMenu } from './service';
 import { MenuTreeItem } from './data';
 import MenuForm from './components/MenuForm'
-
-const { DirectoryTree } = Tree;
 
 /**
  * 获取菜单对象
@@ -24,10 +22,6 @@ const MenuTree: React.FC<{}> = () => {
     fetchMenu(info.node.id).then(result => setValue(result));
   };
 
-  const onExpand = () => {
-    console.log('Trigger Expand');
-  };
-
   useEffect(() => {
     const fetchMenuTree = async () => {
       const result = await queryMenuTree();
@@ -44,10 +38,10 @@ const MenuTree: React.FC<{}> = () => {
           <Col lg={7} md={24}>
             <Card bordered={false} style={{ marginBottom: 24 }}>
               {treeDataValues && treeDataValues.length > 0 ? (
-                <DirectoryTree
+                <Tree
+                  showLine
                   defaultExpandAll
                   onSelect={onSelect}
-                  onExpand={onExpand}
                   treeData={treeDataValues}
                 />
               ) : null}

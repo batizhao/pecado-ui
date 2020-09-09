@@ -1,46 +1,28 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Input, Modal, Dropdown, Menu } from 'antd';
-import React, { useState, useRef, ReactText } from 'react';
+import React, { useState, useRef, ReactText, FC } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
-import CreateForm from './components/CreateForm';
-import UpdateForm from './components/UpdateForm';
+import OperationModal from './components/OperationModal';
 import { TableListItem, TableListParams } from './data';
-import { queryUser, addOrUpdateUser, removeUser } from './service';
+import { remove, query, addOrUpdate } from './service';
+import { findDOMNode } from 'react-dom';
 
-/**
+  /**
  * 添加节点
  * @param fields
  */
-const handleAdd = async (fields: TableListItem) => {
-  const hide = message.loading('正在添加');
+const handleAddOrUpdate = async (fields: TableListItem) => {
+  const hide = message.loading('正在保存');
   try {
-    await addOrUpdateUser({ ...fields });
+    await addOrUpdate({ ...fields });
     hide();
-    message.success('添加成功');
+    message.success('保存成功');
     return true;
   } catch (error) {
     hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields: TableListItem) => {
-  const hide = message.loading('正在编辑');
-  try {
-    await addOrUpdateUser({ ...fields });
-    hide();
-    message.success('编辑成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('编辑失败请重试！');
+    message.error('保存失败，请重试！');
     return false;
   }
 };
@@ -53,7 +35,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeUser({
+    await remove({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -61,21 +43,64 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
     return true;
   } catch (error) {    
     hide();
-    message.error('删除失败，请重试');
+    message.error('删除失败，请重试！');
     return false;
   }
 };
 
-const TableList: React.FC<{}> = () => {
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [stepFormValues, setStepFormValues] = useState({});
+const TableList: FC = () => {
+  const addBtn = useRef(null);
   const actionRef = useRef<ActionType>();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [currentData, setCurrentData] = useState<Partial<TableListItem> | undefined>(undefined);
   const [selectedRowsState, setSelectedRows] = useState<TableListItem[]>([]);
 
+  const fetchData = async (fields: TableListParams) => {
+    const result = await query({ ...fields });
+    return {
+      data: result.data.records,
+      total: result.data.total,
+      current: result.data.current,
+    }
+  }
+
+  const paginationProps = {
+    showSizeChanger: true,
+    showQuickJumper: true,
+    defaultPageSize: 10
+  };
+
   const showEditModal = (item: TableListItem) => {
-    handleUpdateModalVisible(true);
-    setStepFormValues(item);
+    setVisible(true);
+    setCurrentData(item);
+  };
+
+  const showModal = () => {
+    setVisible(true);
+    setCurrentData(undefined);
+  };
+
+  const setAddBtnblur = () => {
+    if (addBtn.current) {
+      // eslint-disable-next-line react/no-find-dom-node
+      const addBtnDom = findDOMNode(addBtn.current) as HTMLButtonElement;
+      setTimeout(() => addBtnDom.blur(), 0);
+    }
+  };
+
+  const handleCancel = () => {
+    setAddBtnblur();
+    setVisible(false);
+    setCurrentData(undefined);
+  };
+
+  const handleSubmit = async (values: TableListItem) => {
+    setAddBtnblur();
+    const success = await handleAddOrUpdate(values);
+    if (success) {
+      setVisible(false);
+      actionRef.current?.reload();
+    }
   };
 
   const editAndDelete = (key: ReactText, currentItem: TableListItem) => {
@@ -86,9 +111,11 @@ const TableList: React.FC<{}> = () => {
         content: `确定删除用户 ${currentItem.name} 吗？`,
         okText: '确认',
         cancelText: '取消',
-        onOk: () => {
-          handleRemove([currentItem]);
-          actionRef.current?.reloadAndRest;
+        onOk: async () => {
+          const success = await handleRemove([currentItem]);
+          if (success) {
+            actionRef.current?.reload();
+          }
         }
       });
     }
@@ -175,7 +202,8 @@ const TableList: React.FC<{}> = () => {
       render: (_, record) => (
         <>
           <a
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               showEditModal(record);
             }}
           >
@@ -188,15 +216,6 @@ const TableList: React.FC<{}> = () => {
     },
   ];
 
-  const fetchData = async (fields: TableListParams) => {
-    const result = await queryUser({ ...fields });
-    return {
-      data: result.data.records,
-      total: result.data.total,
-      current: result.data.current,
-    }
-  }
-
   return (
     <PageContainer>
       <ProTable<TableListItem>
@@ -204,17 +223,15 @@ const TableList: React.FC<{}> = () => {
         actionRef={actionRef}
         rowKey="id"
         toolBarRender={() => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
+          <Button type="primary" onClick={showModal} ref={addBtn}>
             <PlusOutlined /> 新建
           </Button>,
         ]}
+        pagination={paginationProps}
         request={fetchData}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => setSelectedRows(selectedRows),
-        }}
-        pagination={{
-          defaultPageSize: 10
         }}
       />
       {selectedRowsState?.length > 0 && (
@@ -238,43 +255,13 @@ const TableList: React.FC<{}> = () => {
         </FooterToolbar>
       )}
 
-      <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
-        <ProTable<TableListItem, TableListItem>
-          onSubmit={async (value) => {
-            const success = await handleAdd(value);
-            if (success) {
-              handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reloadAndRest;
-              }
-            }
-          }}
-          rowKey="key"
-          type="form"
-          columns={columns}
-          rowSelection={{}}
-        />
-      </CreateForm>
-      {stepFormValues && Object.keys(stepFormValues).length ? (
-        <UpdateForm
-          onSubmit={async (value) => {
-            const success = await handleUpdate(value as TableListItem);
-            if (success) {
-              handleUpdateModalVisible(false);
-              setStepFormValues({});
-              if (actionRef.current) {
-                actionRef.current.reloadAndRest;
-              }
-            }
-          }}
-          onCancel={() => {
-            handleUpdateModalVisible(false);
-            setStepFormValues({});
-          }}
-          updateModalVisible={updateModalVisible}
-          values={stepFormValues}
-        />
-      ) : null}
+      <OperationModal
+        current={currentData}
+        visible={visible}
+        handleOk={handleSubmit}
+        handleCancel={handleCancel}
+
+      />
     </PageContainer>
   );
 };

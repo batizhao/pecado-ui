@@ -6,7 +6,7 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
 import OperationModal from './components/OperationModal';
 import { TableListItem, TableListParams } from './data';
-import { remove, query, addOrUpdate } from './service';
+import { removeUser, queryUser, addOrUpdateUser } from './service';
 import { findDOMNode } from 'react-dom';
 
   /**
@@ -16,7 +16,7 @@ import { findDOMNode } from 'react-dom';
 const handleAddOrUpdate = async (fields: TableListItem) => {
   const hide = message.loading('正在保存');
   try {
-    await addOrUpdate({ ...fields });
+    await addOrUpdateUser({ ...fields });
     hide();
     message.success('保存成功');
     return true;
@@ -35,7 +35,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await remove({
+    await removeUser({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -56,7 +56,7 @@ const TableList: FC = () => {
   const [selectedRowsState, setSelectedRows] = useState<TableListItem[]>([]);
 
   const fetchData = async (fields: TableListParams) => {
-    const result = await query({ ...fields });
+    const result = await queryUser({ ...fields });
     return {
       data: result.data.records,
       total: result.data.total,

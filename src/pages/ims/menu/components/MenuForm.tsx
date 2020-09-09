@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Radio, InputNumber, Button } from 'antd';
-import { MenuTreeItem } from '../../menu/data';
+import { MenuTreeItem } from '../data';
 import { connect, Dispatch } from 'umi';
 
 interface MenuFormProps {
@@ -35,7 +35,7 @@ const MenuForm: React.FC<MenuFormProps> = (props) => {
   const onFinish = (values: { [key: string]: any }) => {
     const { dispatch } = props;
     dispatch({
-      type: 'ims_menu/submitForm',
+      type: 'imsMenu/submit',
       payload: values,
     });
   };
@@ -75,10 +75,10 @@ const MenuForm: React.FC<MenuFormProps> = (props) => {
 
       <FormItem {...tailLayout} style={{ marginTop: 32 }}>
         <Button type="primary" htmlType="submit" loading={submitting}>
-          Submit
+          保存
         </Button>
         <Button htmlType="button" onClick={onReset} style={{ marginLeft: 8 }}>
-          Reset
+          重置
         </Button>
       </FormItem>
     </Form>
@@ -86,5 +86,5 @@ const MenuForm: React.FC<MenuFormProps> = (props) => {
 };
 
 export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
-  submitting: loading.effects['ims_menu/submitForm'],
+  submitting: loading.effects['imsMenu/submit'],
 }))(MenuForm);

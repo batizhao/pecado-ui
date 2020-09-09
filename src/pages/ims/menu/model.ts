@@ -6,17 +6,17 @@ export interface ModelType {
   namespace: string;
   state: {};
   effects: {
-    submitForm: Effect;
+    submit: Effect;
   };
 }
 
 const Model: ModelType = {
-  namespace: 'ims_menu',
+  namespace: 'imsMenu',
 
   state: {},
 
   effects: {
-    *submitForm({ payload }, { call }) {
+    *submit({ payload }, { call }) {
       yield call(addOrUpdateMenu, payload);
       message.success('提交成功');
     },

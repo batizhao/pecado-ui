@@ -16,10 +16,10 @@ const fetchMenu = async (menuId: number) => {
 
 const MenuTree: React.FC<{}> = () => {
   const [treeDataValues, setTreeDataValues] = useState<MenuTreeItem[]>([]);
-  const [value, setValue] = useState<MenuTreeItem>();
+  const [currentData, setCurrentData] = useState<MenuTreeItem>();
 
   const onSelect = (selectedKeys: ReactText[], info: any) => {
-    fetchMenu(info.node.id).then(result => setValue(result));
+    fetchMenu(info.node.id).then(result => setCurrentData(result));
   };
 
   useEffect(() => {
@@ -49,16 +49,7 @@ const MenuTree: React.FC<{}> = () => {
           </Col>
           <Col lg={17} md={24}>
             <Card>
-              <MenuForm value={value} />
-              {/* <Empty
-                description={
-                  <span>
-                    请选择左侧菜单
-                  </span>
-                }
-              >
-                <Button type="primary">新建</Button>
-              </Empty> */}
+              <MenuForm value={currentData} />
             </Card>
           </Col>
         </Row>

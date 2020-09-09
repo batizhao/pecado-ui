@@ -1,5 +1,5 @@
 
-export interface BasicListItemDataType {
+export interface SystemLog {
   id: number;
   httpRequestMethod: string;
   className: string;

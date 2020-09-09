@@ -246,7 +246,7 @@ const TableList: FC = () => {
             onClick={async () => {
               await handleRemove(selectedRowsState);
               setSelectedRows([]);
-              actionRef.current?.reloadAndRest;
+              actionRef.current?.reload();
             }}
           >
             批量删除
@@ -260,7 +260,6 @@ const TableList: FC = () => {
         visible={visible}
         handleOk={handleSubmit}
         handleCancel={handleCancel}
-
       />
     </PageContainer>
   );

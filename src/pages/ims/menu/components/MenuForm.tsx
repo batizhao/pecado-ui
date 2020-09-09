@@ -85,6 +85,14 @@ const MenuForm: React.FC<MenuFormProps> = (props) => {
   );
 };
 
-export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
-  submitting: loading.effects['imsMenu/submit'],
-}))(MenuForm);
+export default connect(
+  ({ 
+    loading 
+  }: { 
+    loading: { 
+      effects: { [key: string]: boolean } 
+    } 
+  }) => ({
+    submitting: loading.effects['imsMenu/submit'],
+  }),
+)(MenuForm);

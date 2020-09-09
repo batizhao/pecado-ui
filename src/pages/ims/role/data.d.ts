@@ -19,6 +19,7 @@ export interface TableListItem {
 
 export interface TableListParams {
   name?: string;
+  code?: string;
   pageSize?: number;
   current?: number;
   filter?: { [key: string]: any[] };

@@ -23,7 +23,7 @@ export interface ModelType {
 }
 
 const Model: ModelType = {
-  namespace: 'listBasicList',
+  namespace: 'systemLog',
 
   state: {
     list: [],
@@ -58,7 +58,7 @@ const Model: ModelType = {
         // data: action.payload.data.records,
       };
     },
-    appendList(state = { list: [] }, action) {
+    appendList(state, action) {
       return {
         ...state,
         list: state.list.concat(action.payload.data.records),

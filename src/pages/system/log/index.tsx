@@ -21,8 +21,8 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Search } = Input;
 
-interface ListBasicListProps {
-  listBasicList: StateType;
+interface ListProps {
+  systemLog: StateType;
   dispatch: Dispatch;  
   loading: boolean;
 }
@@ -39,16 +39,16 @@ const Info: FC<{
   </div>
 );
 
-export const ListBasicList: FC<ListBasicListProps> = (props) => {
+export const BasicList: FC<ListProps> = (props) => {
   const {
     loading,
     dispatch,
-    listBasicList: { list, current, total },
+    systemLog: { list, current, total },
   } = props;
 
   useEffect(() => {
     dispatch({
-      type: 'listBasicList/fetch',
+      type: 'systemLog/fetch',
       payload: {
         current: 1,
       },
@@ -57,7 +57,7 @@ export const ListBasicList: FC<ListBasicListProps> = (props) => {
 
   const onLoadMore = () => {
     dispatch({
-      type: 'listBasicList/appendFetch',
+      type: 'systemLog/appendFetch',
       payload: {
         current: current+1,
       },
@@ -156,15 +156,15 @@ export const ListBasicList: FC<ListBasicListProps> = (props) => {
 
 export default connect(
   ({
-    listBasicList,
+    systemLog,
     loading,
   }: {
-    listBasicList: StateType;
+    systemLog: StateType;
     loading: {
       models: { [key: string]: boolean };
     };
   }) => ({
-    listBasicList,
-    loading: loading.models.listBasicList,
+    systemLog,
+    loading: loading.models.systemLog,
   }),
-)(ListBasicList);
+)(BasicList);

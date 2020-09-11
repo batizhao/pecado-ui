@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, message, Input, Modal, Dropdown, Menu } from 'antd';
+import { Button, Divider, message, Input, Modal, Dropdown, Menu, Switch } from 'antd';
 import React, { useState, useRef, ReactText, FC } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -124,14 +124,7 @@ const TableList: FC = () => {
   };
 
   const editAndDelete = async (key: ReactText, currentItem: TableListItem) => {
-    if (key === 'lock' || key === 'unlock') {
-      const status = key === 'lock' ? 1 : 0;
-      const success = await handleLockUser(currentItem, status);
-      if (success) {
-        currentItem.locked = status;
-        setCurrentData(currentItem);
-      }
-    } else if (key === 'delete') {
+    if (key === 'delete') {
       Modal.confirm({
         title: '删除用户',
         content: `确定删除用户 ${currentItem.name} 吗？`,
@@ -147,13 +140,19 @@ const TableList: FC = () => {
     }
   };
 
+  //启用禁用用户
+  const toggleStatus = async (checked: any, record: TableListItem) => {
+    const status = checked ? 0 : 1;
+    await handleLockUser(record, status);
+  };
+
   const MoreBtn: React.FC<{
     item: TableListItem;
   }> = ({ item }) => (
     <Dropdown
       overlay={
         <Menu onClick={({ key }) => editAndDelete(key, item)}>
-          {item.locked === 0 ? (<Menu.Item key="lock">禁用</Menu.Item>) : (<Menu.Item key="unlock">启用</Menu.Item>)}
+          {/* {item.locked === 0 ? (<Menu.Item key="lock">禁用</Menu.Item>) : (<Menu.Item key="unlock">启用</Menu.Item>)} */}
           <Menu.Item key="delete">删除</Menu.Item>
         </Menu>
       }
@@ -182,9 +181,14 @@ const TableList: FC = () => {
       dataIndex: 'locked',
       hideInForm: true,
       valueEnum: {
-        0: { text: '正常', status: 'Success' },
-        1: { text: '禁用', status: 'Error' },
+        0: { text: '正常'},
+        1: { text: '禁用'},
       },
+      render: (text, record) => (
+          <Switch checkedChildren='开' unCheckedChildren='关'
+                  defaultChecked={record.locked === 0 ? true : false} 
+                  onChange={(checked) => toggleStatus(checked, record)} />
+      ),
     },
     {
       title: '注册时间',

@@ -21,3 +21,15 @@ export async function addOrUpdateUser(params: TableListItem) {
     },
   });
 }
+
+export async function lockUser(params: { id: number }) {
+  return request(`/api/ims/user/lock?id=${params.id}`, {
+    method: 'POST',
+  });
+}
+
+export async function unLockUser(params: { id: number }) {
+  return request(`/api/ims/user/unlock?id=${params.id}`, {
+    method: 'POST',
+  });
+}

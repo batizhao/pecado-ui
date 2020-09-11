@@ -6,11 +6,11 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
 import OperationModal from './components/OperationModal';
 import { TableListItem, TableListParams } from './data';
-import { removeUser, queryUser, addOrUpdateUser } from './service';
+import { removeUser, queryUser, addOrUpdateUser, lockUser, unLockUser } from './service';
 import { findDOMNode } from 'react-dom';
 
   /**
- * 添加节点
+ * 添加
  * @param fields
  */
 const handleAddOrUpdate = async (fields: TableListItem) => {
@@ -28,7 +28,7 @@ const handleAddOrUpdate = async (fields: TableListItem) => {
 };
 
 /**
- *  删除节点
+ *  删除
  * @param selectedRows
  */
 const handleRemove = async (selectedRows: TableListItem[]) => {
@@ -44,6 +44,26 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   } catch (error) {    
     hide();
     message.error('删除失败，请重试！');
+    return false;
+  }
+};
+
+/**
+ * 启用/禁用
+ * @param selectedRows
+ * @param locked
+ */
+const handleLockUser = async (selectedRows: TableListItem, locked: number) => {
+  const hide = message.loading('正在执行');
+  if (!selectedRows) return true;
+  try {
+    locked === 1 ? await lockUser({id: selectedRows.id}) : await unLockUser({id: selectedRows.id});
+    hide();
+    message.success('执行成功，即将刷新');
+    return true;
+  } catch (error) {    
+    hide();
+    message.error('执行失败，请重试！');
     return false;
   }
 };
@@ -103,9 +123,15 @@ const TableList: FC = () => {
     }
   };
 
-  const editAndDelete = (key: ReactText, currentItem: TableListItem) => {
-    if (key === 'edit') showEditModal(currentItem);
-    else if (key === 'delete') {
+  const editAndDelete = async (key: ReactText, currentItem: TableListItem) => {
+    if (key === 'lock' || key === 'unlock') {
+      const status = key === 'lock' ? 1 : 0;
+      const success = await handleLockUser(currentItem, status);
+      if (success) {
+        currentItem.locked = status;
+        setCurrentData(currentItem);
+      }
+    } else if (key === 'delete') {
       Modal.confirm({
         title: '删除用户',
         content: `确定删除用户 ${currentItem.name} 吗？`,
@@ -127,7 +153,7 @@ const TableList: FC = () => {
     <Dropdown
       overlay={
         <Menu onClick={({ key }) => editAndDelete(key, item)}>
-          <Menu.Item key="edit">编辑</Menu.Item>
+          {item.locked === 0 ? (<Menu.Item key="lock">禁用</Menu.Item>) : (<Menu.Item key="unlock">启用</Menu.Item>)}
           <Menu.Item key="delete">删除</Menu.Item>
         </Menu>
       }
@@ -142,33 +168,14 @@ const TableList: FC = () => {
     {
       title: '姓名',
       dataIndex: 'name',
-      rules: [
-        {
-          required: true,
-          message: '姓名为必填项',
-        },
-      ],
     },
     {
       title: '用户名',
       dataIndex: 'username',
-      rules: [
-        {
-          required: true,
-          message: '用户名为必填项',
-        },
-      ],
     },
     {
       title: '邮箱',
-      dataIndex: 'email',
-      rules: [
-        {
-          required: true,
-          type: 'email',
-          message: '邮箱为必填项',
-        },
-      ],    
+      dataIndex: 'email',  
     },
     {
       title: '状态',
@@ -251,7 +258,7 @@ const TableList: FC = () => {
           >
             批量删除
           </Button>
-          <Button>批量禁用</Button>
+          {/* <Button>批量禁用</Button> */}
         </FooterToolbar>
       )}
 

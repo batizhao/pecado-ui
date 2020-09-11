@@ -165,22 +165,10 @@ const TableList: FC<{}> = () => {
     {
       title: '名称',
       dataIndex: 'name',
-      rules: [
-        {
-          required: true,
-          message: '名称为必填项',
-        },
-      ],
     },
     {
       title: '代码',
       dataIndex: 'code',
-      rules: [
-        {
-          required: true,
-          message: '代码为必填项',
-        },
-      ],
     },
     {
       title: '创建时间',
@@ -244,7 +232,7 @@ const TableList: FC<{}> = () => {
           >
             批量删除
           </Button>
-          <Button>批量禁用</Button>
+          {/* <Button>批量禁用</Button> */}
         </FooterToolbar>
       )}
 

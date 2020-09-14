@@ -14,11 +14,11 @@ import { findDOMNode } from 'react-dom';
  * @param fields
  */
 const handleAddOrUpdate = async (fields: TableListItem) => {
-  const hide = message.loading('正在保存');
+  const hide = message.loading('正在保存...');
   try {
     await addOrUpdateUser({ ...fields });
     hide();
-    message.success('保存成功');
+    message.success('保存成功！');
     return true;
   } catch (error) {
     hide();
@@ -32,14 +32,14 @@ const handleAddOrUpdate = async (fields: TableListItem) => {
  * @param selectedRows
  */
 const handleRemove = async (selectedRows: TableListItem[]) => {
-  const hide = message.loading('正在删除');
+  const hide = message.loading('正在删除...');
   if (!selectedRows) return true;
   try {
     await removeUser({
       id: selectedRows.map((row) => row.id),
     });
     hide();
-    message.success('删除成功，即将刷新');
+    message.success('删除成功！');
     return true;
   } catch (error) {    
     hide();
@@ -54,12 +54,12 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
  * @param locked
  */
 const handleLockUser = async (selectedRows: TableListItem, locked: number) => {
-  const hide = message.loading('正在执行');
+  const hide = message.loading('正在执行...');
   if (!selectedRows) return true;
   try {
     locked === 1 ? await lockUser({id: selectedRows.id}) : await unLockUser({id: selectedRows.id});
     hide();
-    message.success('执行成功，即将刷新');
+    // message.success('执行成功！');
     return true;
   } catch (error) {    
     hide();

@@ -16,11 +16,11 @@ import { findDOMNode } from 'react-dom';
  * @param fields
  */
 const handleAddOrUpdate = async (fields: TableListItem) => {
-  const hide = message.loading('正在保存');
+  const hide = message.loading('正在保存...');
   try {
     await addOrUpdateRole({ ...fields });
     hide();
-    message.success('保存成功');
+    message.success('保存成功！');
     return true;
   } catch (error) {
     hide();
@@ -34,18 +34,18 @@ const handleAddOrUpdate = async (fields: TableListItem) => {
  * @param selectedRows
  */
 const handleRemove = async (selectedRows: TableListItem[]) => {
-  const hide = message.loading('正在删除');
+  const hide = message.loading('正在删除...');
   if (!selectedRows) return true;
   try {
     await removeRole({
       id: selectedRows.map((row) => row.id),
     });
     hide();
-    message.success('删除成功，即将刷新');
+    message.success('删除成功！');
     return true;
   } catch (error) {    
     hide();
-    message.error('删除失败，请重试');
+    message.error('删除失败，请重试！');
     return false;
   }
 };
@@ -61,7 +61,7 @@ const fetchRoleMenuData = async (roleId: number) => {
     const value = data.map((row: { permission: string; }) => row.permission);
     return value;
   } catch (error) {
-    message.error('加载失败，请重试');    
+    message.error('加载失败，请重试！');    
     return false;
   }
 };

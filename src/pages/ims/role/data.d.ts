@@ -1,4 +1,4 @@
-export interface TableListItem {
+export interface RoleListItem {
   id: number;
   name: string;
   code: string;
@@ -17,7 +17,7 @@ export interface TableListItem {
 //   pagination: Partial<TableListPagination>;
 // }
 
-export interface TableListParams {
+export interface RoleListParams {
   name?: string;
   code?: string;
   pageSize?: number;

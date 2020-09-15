@@ -5,15 +5,17 @@ import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
 import OperationModal from './components/OperationModal';
-import { TableListItem, TableListParams } from './data';
-import { removeUser, queryUser, addOrUpdateUser, lockUser, unLockUser } from './service';
+import { UserListItem, UserListParams } from './data';
+import { removeUser, queryUser, addOrUpdateUser, lockUser, unLockUser, handleAddUserRoles } from './service';
 import { findDOMNode } from 'react-dom';
+import RoleForm from './components/RoleForm';
+import { queryRoleByUserId } from '../role/service';
 
   /**
  * 添加
  * @param fields
  */
-const handleAddOrUpdate = async (fields: TableListItem) => {
+const handleAddOrUpdate = async (fields: UserListItem) => {
   const hide = message.loading('正在保存...');
   try {
     await addOrUpdateUser({ ...fields });
@@ -31,7 +33,7 @@ const handleAddOrUpdate = async (fields: TableListItem) => {
  *  删除
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: TableListItem[]) => {
+const handleRemove = async (selectedRows: UserListItem[]) => {
   const hide = message.loading('正在删除...');
   if (!selectedRows) return true;
   try {
@@ -53,7 +55,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
  * @param selectedRows
  * @param locked
  */
-const handleLockUser = async (selectedRows: TableListItem, locked: number) => {
+const handleLockUser = async (selectedRows: UserListItem, locked: number) => {
   const hide = message.loading('正在执行...');
   if (!selectedRows) return true;
   try {
@@ -68,14 +70,32 @@ const handleLockUser = async (selectedRows: TableListItem, locked: number) => {
   }
 };
 
+/**
+ *  获取用户角色
+ * @param userId
+ */
+const fetchRoleData = async (userId: number) => {
+  try {
+    const result = await queryRoleByUserId(userId);
+    const data = result.data;
+    const value = data.map((row: { code: string; }) => row.code);
+    return value;
+  } catch (error) {
+    message.error('加载失败，请重试！');    
+    return false;
+  }
+};
+
 const TableList: FC = () => {
   const addBtn = useRef(null);
   const actionRef = useRef<ActionType>();
   const [visible, setVisible] = useState<boolean>(false);
-  const [currentData, setCurrentData] = useState<Partial<TableListItem> | undefined>(undefined);
-  const [selectedRowsState, setSelectedRows] = useState<TableListItem[]>([]);
+  const [currentData, setCurrentData] = useState<Partial<UserListItem> | undefined>(undefined);
+  const [selectedRowsState, setSelectedRows] = useState<UserListItem[]>([]);
+  const [roleModalVisible, setRoleModalVisible] = useState<boolean>(false);
+  const [roleValues, setRoleValues] = useState<string[]>([]);
 
-  const fetchData = async (fields: TableListParams) => {
+  const fetchData = async (fields: UserListParams) => {
     const result = await queryUser({ ...fields });
     return {
       data: result.data.records,
@@ -90,7 +110,7 @@ const TableList: FC = () => {
     defaultPageSize: 10
   };
 
-  const showEditModal = (item: TableListItem) => {
+  const showEditModal = (item: UserListItem) => {
     setVisible(true);
     setCurrentData(item);
   };
@@ -98,7 +118,7 @@ const TableList: FC = () => {
   const showModal = () => {
     setVisible(true);
     setCurrentData(undefined);
-  };
+  };  
 
   const setAddBtnblur = () => {
     if (addBtn.current) {
@@ -114,7 +134,7 @@ const TableList: FC = () => {
     setCurrentData(undefined);
   };
 
-  const handleSubmit = async (values: TableListItem) => {
+  const handleSubmit = async (values: UserListItem) => {
     setAddBtnblur();
     const success = await handleAddOrUpdate(values);
     if (success) {
@@ -123,8 +143,27 @@ const TableList: FC = () => {
     }
   };
 
-  const editAndDelete = async (key: ReactText, currentItem: TableListItem) => {
-    if (key === 'delete') {
+  const showRoleModal = async (id: number) => {
+    setRoleModalVisible(true);
+    fetchRoleData(id).then(result => setRoleValues(result));
+  }
+
+  const handleRoleCancel = () => {
+    setAddBtnblur();
+    setRoleModalVisible(false);
+  };
+
+  const handleRoleSubmit = async (values: string[]) => {
+    const success = await handleAddUserRoles(values);
+    if (success) {
+      setRoleModalVisible(false);
+    }
+  };
+
+  const editAndDelete = async (key: ReactText, currentItem: UserListItem) => {
+    if (key === 'role') {
+      showRoleModal(currentItem.id);
+    } else if (key === 'delete') {
       Modal.confirm({
         title: '删除用户',
         content: `确定删除用户 ${currentItem.name} 吗？`,
@@ -141,18 +180,18 @@ const TableList: FC = () => {
   };
 
   //启用禁用用户
-  const toggleStatus = async (checked: any, record: TableListItem) => {
+  const toggleStatus = async (checked: any, record: UserListItem) => {
     const status = checked ? 0 : 1;
     await handleLockUser(record, status);
   };
 
   const MoreBtn: React.FC<{
-    item: TableListItem;
+    item: UserListItem;
   }> = ({ item }) => (
     <Dropdown
       overlay={
         <Menu onClick={({ key }) => editAndDelete(key, item)}>
-          {/* {item.locked === 0 ? (<Menu.Item key="lock">禁用</Menu.Item>) : (<Menu.Item key="unlock">启用</Menu.Item>)} */}
+          <Menu.Item key="role">分配角色</Menu.Item>
           <Menu.Item key="delete">删除</Menu.Item>
         </Menu>
       }
@@ -163,7 +202,7 @@ const TableList: FC = () => {
     </Dropdown>
   );
 
-  const columns: ProColumns<TableListItem>[] = [
+  const columns: ProColumns<UserListItem>[] = [
     {
       title: '姓名',
       dataIndex: 'name',
@@ -229,7 +268,7 @@ const TableList: FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<TableListItem>
+      <ProTable<UserListItem>
         headerTitle="查询表格"
         actionRef={actionRef}
         rowKey="id"
@@ -271,6 +310,13 @@ const TableList: FC = () => {
         visible={visible}
         handleOk={handleSubmit}
         handleCancel={handleCancel}
+      />
+
+      <RoleForm
+        handleOk={handleRoleSubmit}
+        handleCancel={handleRoleCancel}
+        visible={roleModalVisible}
+        values={roleValues}
       />
     </PageContainer>
   );

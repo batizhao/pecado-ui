@@ -1,4 +1,4 @@
-export interface TableListItem {
+export interface UserListItem {
   id: number;
   username: string;
   avatar?: string;
@@ -19,7 +19,7 @@ export interface TableListItem {
 //   pagination: Partial<TableListPagination>;
 // }
 
-export interface TableListParams {
+export interface UserListParams {
   locked?: number;
   name?: string;
   username?: string;

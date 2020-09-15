@@ -7,6 +7,12 @@ export async function queryRole(params?: TableListParams) {
   });
 }
 
+export async function queryRoleByUserId(userId : number): Promise<any> {
+  return request(`/api/ims/role?userId=${userId}`, {
+    method: 'GET',
+  });
+}
+
 export async function removeRole(params: { id: number[] }) {
   return request(`/api/ims/role?ids=${params.id}`, {
     method: 'DELETE',

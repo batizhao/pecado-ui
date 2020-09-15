@@ -3,18 +3,18 @@ import { Modal, Tree } from 'antd';
 import { queryMenuTree } from '../../menu/service';
 import { MenuTreeItem } from '../../menu/data';
 
-interface MenuFormProps {
-  onCancel: (values?: string[]) => void;
-  onSubmit: (values: string[]) => void;
-  modalVisible: boolean;
-  values: string[];
+interface ModalProps {
+  visible: boolean;
+  values: string[] | undefined;
+  handleOk: (values: string[]) => void;
+  handleCancel: () => void;
 }
 
-const MenuForm: React.FC<MenuFormProps> = (props) => {
+const MenuForm: React.FC<ModalProps> = (props) => {
   const {
-    onSubmit: handleUpdate,
-    onCancel: handleMenuModalVisible,
-    modalVisible,
+    handleOk: handleUpdate,
+    handleCancel,
+    visible,
     values,
   } = props;
 
@@ -38,17 +38,18 @@ const MenuForm: React.FC<MenuFormProps> = (props) => {
     setCheckedKeys(checkedKeys);
   };
 
-  const handleSubmit = async () => {
-    handleUpdate([]);
+  const handleSubmit = async (checkedKeys) => {
+    handleUpdate(checkedKeys);
   };
+
+  const modalFooter = { okText: '保存', onOk: handleSubmit, onCancel: handleCancel };
 
   return (
     <Modal
       destroyOnClose
       title="分配权限"
-      visible={modalVisible}
-      onOk={() => handleSubmit()}
-      onCancel={() => handleMenuModalVisible()}
+      visible={visible}
+      {...modalFooter}
     >
       <Tree
         checkable

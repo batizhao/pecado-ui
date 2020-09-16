@@ -11,12 +11,7 @@ interface ModalProps {
 }
 
 const MenuForm: React.FC<ModalProps> = (props) => {
-  const {
-    handleOk: handleUpdate,
-    handleCancel,
-    visible,
-    values,
-  } = props;
+  const { handleOk: handleUpdate, handleCancel, visible, values } = props;
 
   const [treeDataValues, setTreeDataValues] = useState<MenuTreeItem[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<string[]>();
@@ -34,7 +29,7 @@ const MenuForm: React.FC<ModalProps> = (props) => {
     setCheckedKeys(values);
   }, [values]);
 
-  const onCheck = checkedKeys => {
+  const onCheck = (checkedKeys) => {
     setCheckedKeys(checkedKeys);
   };
 
@@ -45,12 +40,7 @@ const MenuForm: React.FC<ModalProps> = (props) => {
   const modalFooter = { okText: '保存', onOk: handleSubmit, onCancel: handleCancel };
 
   return (
-    <Modal
-      destroyOnClose
-      title="分配权限"
-      visible={visible}
-      {...modalFooter}
-    >
+    <Modal destroyOnClose title="分配权限" visible={visible} {...modalFooter}>
       <Tree
         checkable
         defaultExpandAll

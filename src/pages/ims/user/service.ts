@@ -27,6 +27,6 @@ export async function unLockUser(params: { id: number }) {
   return request.post(`/api/ims/user/unlock?id=${params.id}`);
 }
 
-export async function handleAddUserRoles(roles: string[]) {
-  return request.post(`/api/ims/user/role?roles=${roles}`);
+export async function handleAddUserRoles(id: number, roles: string[]) {
+  return request.post(`/api/ims/user/role?id=${id}&&roles=${roles}`);
 }

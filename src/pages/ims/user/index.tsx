@@ -78,7 +78,7 @@ const fetchRoleData = async (userId: number) => {
   try {
     const result = await queryRoleByUserId(userId);
     const data = result.data;
-    const value = data.map((row: { code: string; }) => row.code);
+    const value = data.map((row: { id: string; }) => row.id);
     return value;
   } catch (error) {
     message.error('加载失败，请重试！');    
@@ -94,6 +94,7 @@ const TableList: FC = () => {
   const [selectedRowsState, setSelectedRows] = useState<UserListItem[]>([]);
   const [roleModalVisible, setRoleModalVisible] = useState<boolean>(false);
   const [roleValues, setRoleValues] = useState<string[]>([]);
+  const [userId, setUserId] = useState<number>(0);
 
   const fetchData = async (fields: UserListParams) => {
     const result = await queryUser({ ...fields });
@@ -145,6 +146,7 @@ const TableList: FC = () => {
 
   const showRoleModal = async (id: number) => {
     setRoleModalVisible(true);
+    setUserId(id);
     fetchRoleData(id).then(result => setRoleValues(result));
   }
 
@@ -153,11 +155,8 @@ const TableList: FC = () => {
     setRoleModalVisible(false);
   };
 
-  const handleRoleSubmit = async (values: string[]) => {
-    const success = await handleAddUserRoles(values);
-    if (success) {
-      setRoleModalVisible(false);
-    }
+  const handleRoleSubmit = async (id: number, roles: string[]) => {
+    handleAddUserRoles(id, roles).then(() => setRoleModalVisible(false));
   };
 
   const editAndDelete = async (key: ReactText, currentItem: UserListItem) => {
@@ -317,6 +316,7 @@ const TableList: FC = () => {
         handleCancel={handleRoleCancel}
         visible={roleModalVisible}
         values={roleValues}
+        id={userId}
       />
     </PageContainer>
   );

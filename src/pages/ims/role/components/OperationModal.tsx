@@ -1,12 +1,12 @@
 import React, { FC, useEffect } from 'react';
 import { Modal, Form, Input } from 'antd';
-import { TableListItem } from '../data.d';
+import { RoleListItem } from '../data.d';
 import styles from '../style.less';
 
 interface OperationModalProps {
   visible: boolean;
-  current: Partial<TableListItem> | undefined;
-  handleOk: (values: TableListItem) => void;
+  current: Partial<RoleListItem> | undefined;
+  handleOk: (values: RoleListItem) => void;
   handleCancel: () => void;
 }
 
@@ -16,12 +16,7 @@ const formLayout = {
 };
 
 const OperationModal: FC<OperationModalProps> = (props) => {
-  const { 
-    visible, 
-    current, 
-    handleOk,
-    handleCancel, 
-  } = props;
+  const { visible, current, handleOk, handleCancel } = props;
 
   const [form] = Form.useForm();
   const FormItem = Form.Item;
@@ -45,9 +40,9 @@ const OperationModal: FC<OperationModalProps> = (props) => {
     form.submit();
   };
 
-  const handleFinish = (values: { [key: string]: any }) => {
+  const handleFinish = (values: RoleListItem) => {
     if (handleOk) {
-      handleOk(values as TableListItem);
+      handleOk(values);
     }
   };
 
@@ -57,24 +52,13 @@ const OperationModal: FC<OperationModalProps> = (props) => {
     return (
       <Form {...formLayout} form={form} onFinish={handleFinish}>
         <FormItem name="id" hidden={true} />
-        <FormItem
-          name="name"
-          label="名称"
-          rules={[{ required: true, message: '请输入名称！' }]}
-        >
+        <FormItem name="name" label="名称" rules={[{ required: true, message: '请输入名称！' }]}>
           <Input placeholder="请输入" />
         </FormItem>
-        <FormItem
-          name="code"
-          label="代码"
-          rules={[{ required: true, message: '请输入代码！'}]}
-        >
+        <FormItem name="code" label="代码" rules={[{ required: true, message: '请输入代码！' }]}>
           <Input placeholder="请输入" />
         </FormItem>
-        <FormItem
-          name="description"
-          label="说明"
-        >
+        <FormItem name="description" label="说明">
           <Input placeholder="请输入" />
         </FormItem>
       </Form>

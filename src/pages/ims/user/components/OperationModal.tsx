@@ -16,12 +16,7 @@ const formLayout = {
 };
 
 const OperationModal: FC<OperationModalProps> = (props) => {
-  const { 
-    visible, 
-    current, 
-    handleOk,
-    handleCancel, 
-  } = props;
+  const { visible, current, handleOk, handleCancel } = props;
 
   const [form] = Form.useForm();
   const FormItem = Form.Item;
@@ -57,24 +52,20 @@ const OperationModal: FC<OperationModalProps> = (props) => {
     return (
       <Form {...formLayout} form={form} onFinish={handleFinish}>
         <FormItem name="id" hidden={true} />
-        <FormItem
-          name="name"
-          label="姓名"
-          rules={[{ required: true, message: '请输入姓名！' }]}
-        >
+        <FormItem name="name" label="姓名" rules={[{ required: true, message: '请输入姓名！' }]}>
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
           name="username"
           label="用户名"
-          rules={[{ required: true, message: '请输入用户名！'}]}
+          rules={[{ required: true, message: '请输入用户名！' }]}
         >
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
           name="email"
           label="邮箱"
-          rules={[{ required: true, message: '请输入邮箱！', type: "email"}]}
+          rules={[{ required: true, message: '请输入邮箱！', type: 'email' }]}
         >
           <Input placeholder="请输入" />
         </FormItem>

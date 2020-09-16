@@ -7,7 +7,7 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import MenuForm from './components/MenuForm';
 import OperationModal from './components/OperationModal';
 import { RoleListItem, RoleListParams } from './data';
-import { queryRole, addOrUpdateRole, removeRole } from './service';
+import { queryRole, addOrUpdateRole, removeRole, handleAddRoleMenus } from './service';
 import { fetchByRoleId } from '@/services/menu';
 import { findDOMNode } from 'react-dom';
 

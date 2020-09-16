@@ -10,8 +10,7 @@ export async function queryMenu(id: number): Promise<any> {
 }
 
 export async function addOrUpdateMenu(params: MenuTreeItem) {
-  return request('/api/ims/menu', {
-    method: 'POST',
+  return request.post('/api/ims/menu', {
     data: {
       ...params,
     },

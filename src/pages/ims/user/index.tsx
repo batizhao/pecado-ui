@@ -1,14 +1,14 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Input, Modal, Dropdown, Menu, Switch } from 'antd';
 import React, { useState, useRef, ReactText, FC } from 'react';
+import { findDOMNode } from 'react-dom';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
 import OperationModal from './components/OperationModal';
+import RoleModal from './components/RoleModal';
 import { UserListItem, UserListParams } from './data';
 import { removeUser, queryUser, addOrUpdateUser, lockUser, unLockUser, handleAddUserRoles } from './service';
-import { findDOMNode } from 'react-dom';
-import RoleForm from './components/RoleForm';
 import { queryRoleByUserId } from '../role/service';
 
   /**
@@ -311,7 +311,7 @@ const TableList: FC = () => {
         handleCancel={handleCancel}
       />
 
-      <RoleForm
+      <RoleModal
         handleOk={handleRoleSubmit}
         handleCancel={handleRoleCancel}
         visible={roleModalVisible}

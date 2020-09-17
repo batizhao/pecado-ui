@@ -5,16 +5,17 @@ import { MenuTreeItem } from '../../menu/data';
 
 interface ModalProps {
   visible: boolean;
-  values: string[] | undefined;
-  handleOk: (values: string[]) => void;
+  values: string[];
+  id: number;
+  handleOk: (id: number, menus: string[]) => void;
   handleCancel: () => void;
 }
 
-const MenuForm: React.FC<ModalProps> = (props) => {
-  const { handleOk: handleUpdate, handleCancel, visible, values } = props;
+const MenuModal: React.FC<ModalProps> = (props) => {
+  const { handleOk: handleUpdate, handleCancel, visible, values, id } = props;
 
   const [treeDataValues, setTreeDataValues] = useState<MenuTreeItem[]>([]);
-  const [checkedKeys, setCheckedKeys] = useState<string[]>();
+  const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,15 +27,15 @@ const MenuForm: React.FC<ModalProps> = (props) => {
   }, []);
 
   useEffect(() => {
-    setCheckedKeys(values);
+    setCheckedKeys(values);    
   }, [values]);
 
   const onCheck = (checkedKeys) => {
     setCheckedKeys(checkedKeys);
   };
 
-  const handleSubmit = async (checkedKeys) => {
-    handleUpdate(checkedKeys);
+  const handleSubmit = async () => {
+    handleUpdate(id, checkedKeys);
   };
 
   const modalFooter = { okText: '保存', onOk: handleSubmit, onCancel: handleCancel };
@@ -52,4 +53,4 @@ const MenuForm: React.FC<ModalProps> = (props) => {
   );
 };
 
-export default MenuForm;
+export default MenuModal;

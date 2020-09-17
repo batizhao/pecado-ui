@@ -15,7 +15,7 @@ interface Option {
   value: string;
 }
 
-const RoleForm: FC<ModalProps> = (props) => {
+const RoleModal: FC<ModalProps> = (props) => {
   const { visible, values, id, handleOk: handleRoleSubmit, handleCancel } = props;
 
   const [roleDataValues, setRoleDataValues] = useState<Option[]>([]);
@@ -67,4 +67,4 @@ const RoleForm: FC<ModalProps> = (props) => {
   );
 };
 
-export default RoleForm;
+export default RoleModal;

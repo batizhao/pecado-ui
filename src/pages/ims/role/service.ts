@@ -23,6 +23,6 @@ export async function addOrUpdateRole(params: RoleListItem) {
   });
 }
 
-export async function handleAddRoleMenus(menus: string[]) {
-  return request.post(`/api/ims/role/menu?menus=${menus}`);
+export async function handleAddRoleMenus(id: number, menus: string[]) {
+  return request.post(`/api/ims/role/menu?id=${id}&&menus=${menus}`);
 }

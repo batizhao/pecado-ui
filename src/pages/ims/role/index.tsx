@@ -1,15 +1,15 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Modal, Dropdown, Menu } from 'antd';
 import React, { useState, useRef, ReactText, FC } from 'react';
+import { findDOMNode } from 'react-dom';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
-import MenuForm from './components/MenuForm';
+import MenuModal from './components/MenuModal';
 import OperationModal from './components/OperationModal';
 import { RoleListItem, RoleListParams } from './data';
 import { queryRole, addOrUpdateRole, removeRole, handleAddRoleMenus } from './service';
 import { fetchByRoleId } from '@/services/menu';
-import { findDOMNode } from 'react-dom';
 
 /**
  * 添加节点
@@ -58,7 +58,8 @@ const fetchRoleMenuData = async (roleId: number) => {
   try {
     const result = await fetchByRoleId(roleId);
     const data = result.data;
-    const value = data.map((row: { permission: string; }) => row.permission);
+    const value = data.map((row: { id: number; }) => row.id + '');
+    console.log(value);
     return value;
   } catch (error) {
     message.error('加载失败，请重试！');    
@@ -74,6 +75,7 @@ const TableList: FC<{}> = () => {
   const [menuModalVisible, setMenuModalVisible] = useState<boolean>(false);
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [selectedRowsState, setSelectedRows] = useState<RoleListItem[]>([]);
+  const [roleId, setRoleId] = useState<number>(0);
 
   const fetchData = async (fields: RoleListParams) => {
     const result = await queryRole({ ...fields });
@@ -123,6 +125,7 @@ const TableList: FC<{}> = () => {
 
   const showMenuModal = async (id: number) => {
     setMenuModalVisible(true);
+    setRoleId(id);
     fetchRoleMenuData(id).then(result => setCheckedValues(result));
   }
 
@@ -131,8 +134,8 @@ const TableList: FC<{}> = () => {
     setMenuModalVisible(false);
   };
 
-  const handleMenuSubmit = async (values: string[]) => {
-    handleAddRoleMenus(values).then(() => setMenuModalVisible(false));
+  const handleMenuSubmit = async (id: number, menus: string[]) => {
+    handleAddRoleMenus(id, menus).then(() => setMenuModalVisible(false));
   };
 
   const editAndDelete = (key: ReactText, currentItem: RoleListItem) => {
@@ -253,11 +256,12 @@ const TableList: FC<{}> = () => {
       />
       
       {checkedValues ? (
-        <MenuForm
+        <MenuModal
           handleOk={handleMenuSubmit}
           handleCancel={handleMenuCancel}
           visible={menuModalVisible}
           values={checkedValues}
+          id={roleId}
         />
       ) : null}
     </PageContainer>

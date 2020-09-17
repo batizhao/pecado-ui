@@ -45,7 +45,7 @@ const RoleModal: FC<ModalProps> = (props) => {
     setCheckedKeys(values);
   }, [values]);
 
-  const onChange = (checkedKeys) => {
+  const onChange = (checkedKeys: any) => {
     setCheckedKeys(checkedKeys);
   };
 

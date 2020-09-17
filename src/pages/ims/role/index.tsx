@@ -59,7 +59,6 @@ const fetchRoleMenuData = async (roleId: number) => {
     const result = await fetchByRoleId(roleId);
     const data = result.data;
     const value = data.map((row: { id: number; }) => row.id + '');
-    console.log(value);
     return value;
   } catch (error) {
     message.error('加载失败，请重试！');    

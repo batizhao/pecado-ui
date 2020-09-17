@@ -30,8 +30,8 @@ const MenuModal: React.FC<ModalProps> = (props) => {
     setCheckedKeys(values);    
   }, [values]);
 
-  const onCheck = (checkedKeys) => {
-    setCheckedKeys(checkedKeys);
+  const onCheck = (checkedKeys: any) => {
+    setCheckedKeys(checkedKeys.checked);
   };
 
   const handleSubmit = async () => {
@@ -45,6 +45,8 @@ const MenuModal: React.FC<ModalProps> = (props) => {
       <Tree
         checkable
         defaultExpandAll
+        checkStrictly
+        selectable={false}
         checkedKeys={checkedKeys}
         onCheck={onCheck}
         treeData={treeDataValues}

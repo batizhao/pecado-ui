@@ -1,12 +1,11 @@
 import { Effect, Reducer } from 'umi';
 import { queryLog } from './service';
-
 import { SystemLog } from './data.d';
 
 export interface StateType {
-  list: SystemLog[],
-  current: number,
-  total: number,
+  list: SystemLog[];
+  current: number;
+  total: number;
 }
 
 export interface ModelType {

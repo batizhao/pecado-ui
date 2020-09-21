@@ -7,8 +7,8 @@ export async function queryUser(params?: UserListParams) {
   });
 }
 
-export async function removeUser(params: { id: number[] }) {
-  return request.delete(`/api/ims/user?ids=${params.id}`);
+export async function removeUser(id: number[]) {
+  return request.delete(`/api/ims/user?ids=${id}`);
 }
 
 export async function addOrUpdateUser(params: UserListItem) {
@@ -19,12 +19,12 @@ export async function addOrUpdateUser(params: UserListItem) {
   });
 }
 
-export async function lockUser(params: { id: number }) {
-  return request.post(`/api/ims/user/lock?id=${params.id}`);
+export async function lockUser(id: number) {
+  return request.post(`/api/ims/user/lock?id=${id}`);
 }
 
-export async function unLockUser(params: { id: number }) {
-  return request.post(`/api/ims/user/unlock?id=${params.id}`);
+export async function unLockUser(id: number ) {
+  return request.post(`/api/ims/user/unlock?id=${id}`);
 }
 
 export async function handleAddUserRoles(id: number, roles: string[]) {

@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, message, Modal, Dropdown, Menu } from 'antd';
+import { Button, Divider, Modal, Dropdown, Menu, message } from 'antd';
 import React, { useState, useRef, ReactText, FC } from 'react';
 import { findDOMNode } from 'react-dom';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
@@ -10,61 +10,6 @@ import OperationModal from './components/OperationModal';
 import { RoleListItem, RoleListParams } from './data';
 import { queryRole, addOrUpdateRole, removeRole, handleAddRoleMenus } from './service';
 import { fetchByRoleId } from '@/services/menu';
-
-/**
- * 添加节点
- * @param fields
- */
-const handleAddOrUpdate = async (fields: RoleListItem) => {
-  const hide = message.loading('正在保存...');
-  try {
-    await addOrUpdateRole({ ...fields });
-    hide();
-    message.success('保存成功！');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('保存失败，请重试！');
-    return false;
-  }
-};
-
-/**
- *  删除节点
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: RoleListItem[]) => {
-  const hide = message.loading('正在删除...');
-  if (!selectedRows) return true;
-  try {
-    await removeRole({
-      id: selectedRows.map((row) => row.id),
-    });
-    hide();
-    message.success('删除成功！');
-    return true;
-  } catch (error) {    
-    hide();
-    message.error('删除失败，请重试！');
-    return false;
-  }
-};
-
-/**
- *  获取角色默认菜单
- * @param roleId
- */
-const fetchRoleMenuData = async (roleId: number) => {
-  try {
-    const result = await fetchByRoleId(roleId);
-    const data = result.data;
-    const value = data.map((row: { id: number; }) => row.id + '');
-    return value;
-  } catch (error) {
-    message.error('加载失败，请重试！');    
-    return false;
-  }
-};
 
 const TableList: FC<{}> = () => {
   const addBtn = useRef(null);
@@ -115,8 +60,8 @@ const TableList: FC<{}> = () => {
 
   const handleSubmit = async (values: RoleListItem) => {
     setAddBtnblur();
-    const success = await handleAddOrUpdate(values);
-    if (success) {
+    const result = await addOrUpdateRole(values);
+    if (result.code === 0) {
       setVisible(false);
       actionRef.current?.reload();
     }
@@ -125,7 +70,11 @@ const TableList: FC<{}> = () => {
   const showMenuModal = async (id: number) => {
     setMenuModalVisible(true);
     setRoleId(id);
-    fetchRoleMenuData(id).then(result => setCheckedValues(result));
+    await fetchByRoleId(id).then(result => {
+      const data = result.data;
+      const value = data.map((row: { id: number; }) => row.id + '');
+      setCheckedValues(value)
+    });
   }
 
   const handleMenuCancel = () => {
@@ -146,10 +95,7 @@ const TableList: FC<{}> = () => {
         okText: '确认',
         cancelText: '取消',
         onOk: async () => {
-          const success = await handleRemove([currentItem]);
-          if (success) {
-            actionRef.current?.reload();
-          }
+          await removeRole([currentItem].map((row) => row.id)).then(() => actionRef.current?.reload());
         }
       });
     }
@@ -236,9 +182,10 @@ const TableList: FC<{}> = () => {
         >
           <Button type="dashed" danger
             onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reload();
+              await removeRole(selectedRowsState.map((row) => row.id)).then(() => {
+                setSelectedRows([]);
+                actionRef.current?.reload();
+              });
             }}
           >
             批量删除

@@ -1,16 +1,5 @@
-import React, { FC, useEffect }  from 'react';
-import {
-  Card,
-  Col,
-  Input,
-  Radio,
-  Row,
-  Tag, 
-  Space,
-  Button,
-  List, 
-  Skeleton
-} from 'antd';
+import React, { FC, useEffect } from 'react';
+import { Card, Col, Input, Radio, Row, Tag, Space, Button, List, Skeleton } from 'antd';
 
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect, Dispatch } from 'umi';
@@ -23,7 +12,7 @@ const { Search } = Input;
 
 interface ListProps {
   systemLog: StateType;
-  dispatch: Dispatch;  
+  dispatch: Dispatch;
   loading: boolean;
 }
 
@@ -53,33 +42,33 @@ export const BasicList: FC<ListProps> = (props) => {
         current: 1,
       },
     });
-  },[1]);
+  }, [1]);
 
   const onLoadMore = () => {
     dispatch({
       type: 'systemLog/appendFetch',
       payload: {
-        current: current+1,
+        current: current + 1,
       },
       callback: () => {
         window.dispatchEvent(new Event('resize'));
-      }
+      },
     });
   };
-  
+
   const loadMore =
-      !loading && list.length != total ? (
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: 12,
-            height: 32,
-            lineHeight: '32px',
-          }}
-        >
-          <Button onClick={onLoadMore}>loading more</Button>
-        </div>
-      ) : null ;
+    !loading && list.length != total ? (
+      <div
+        style={{
+          textAlign: 'center',
+          marginTop: 12,
+          height: 32,
+          lineHeight: '32px',
+        }}
+      >
+        <Button onClick={onLoadMore}>loading more</Button>
+      </div>
+    ) : null;
 
   const extraContent = (
     <div className={styles.extraContent}>
@@ -124,11 +113,15 @@ export const BasicList: FC<ListProps> = (props) => {
               loading={loading}
               loadMore={loadMore}
               dataSource={list}
-              renderItem={item => (
+              renderItem={(item) => (
                 <List.Item>
                   <Skeleton avatar title={false} loading={loading} active>
                     <List.Item.Meta
-                      title={<a> {item.id}. {item.classMethod} <Space size={0}>
+                      title={
+                        <a>
+                          {' '}
+                          {item.id}. {item.classMethod}{' '}
+                          <Space size={0}>
                             <Tag color="blue">{item.description}</Tag>
                             <Tag color="#5BD8A6">{item.httpRequestMethod}</Tag>
                             <Tag color="green">{item.clientId}</Tag>
@@ -138,7 +131,8 @@ export const BasicList: FC<ListProps> = (props) => {
                             <Tag color="pink">{item.spend}ms</Tag>
                             <Tag color="geekblue">{item.url}</Tag>
                           </Space>
-                        </a>}
+                        </a>
+                      }
                       description={item.parameter}
                     />
                     <div>{item.result}</div>
@@ -149,7 +143,6 @@ export const BasicList: FC<ListProps> = (props) => {
           </Card>
         </div>
       </PageContainer>
-
     </div>
   );
 };

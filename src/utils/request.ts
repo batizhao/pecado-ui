@@ -26,14 +26,16 @@ const codeMessage = {
 /**
  * 异常处理程序
  */
-const errorHandler = (error: { response: Response }): Response => {
-  const { response } = error;
+const errorHandler = (error: { response: Response; data: any; }) => {
+  const { response, data } = error;
   if (response && response.status) {
-    const errorText = codeMessage[response.status] || response.statusText;
+    const errorText = (data && data.code && data.message) || 
+                      codeMessage[response.status] || 
+                      response.statusText;
     const { status, url } = response;
 
     notification.error({
-      message: `请求错误 ${status}: ${url}`,
+      message: `错误代码 ${data.code || status} : ${url}`,
       description: errorText,
     });
   } else if (!response) {
@@ -42,7 +44,8 @@ const errorHandler = (error: { response: Response }): Response => {
       message: '网络异常',
     });
   }
-  return response;
+  // throw error;
+  return data;
 };
 
 /**
@@ -70,10 +73,11 @@ request.interceptors.request.use((url, options) => {
 
 request.interceptors.response.use(async (response) => {
   const data = await response.clone().json();
-  if(data.code === 100003) {
+  if (data.code === 100003) {
     location.href = '/user/login';
   }
   return response;
-})
+});
 
 export default request;
+// 

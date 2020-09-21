@@ -11,8 +11,8 @@ export async function queryRoleByUserId(userId : number): Promise<any> {
   return request(`/api/ims/role?userId=${userId}`);
 }
 
-export async function removeRole(params: { id: number[] }) {
-  return request.delete(`/api/ims/role?ids=${params.id}`);
+export async function removeRole(ids: number[]) {
+  return request.delete(`/api/ims/role?ids=${ids}`);
 }
 
 export async function addOrUpdateRole(params: RoleListItem) {

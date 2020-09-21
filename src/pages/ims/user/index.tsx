@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, message, Input, Modal, Dropdown, Menu, Switch } from 'antd';
+import { Button, Divider, Input, Modal, Dropdown, Menu, Switch } from 'antd';
 import React, { useState, useRef, ReactText, FC } from 'react';
 import { findDOMNode } from 'react-dom';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
@@ -10,81 +10,6 @@ import RoleModal from './components/RoleModal';
 import { UserListItem, UserListParams } from './data';
 import { removeUser, queryUser, addOrUpdateUser, lockUser, unLockUser, handleAddUserRoles } from './service';
 import { queryRoleByUserId } from '../role/service';
-
-  /**
- * 添加
- * @param fields
- */
-const handleAddOrUpdate = async (fields: UserListItem) => {
-  const hide = message.loading('正在保存...');
-  try {
-    await addOrUpdateUser({ ...fields });
-    hide();
-    message.success('保存成功！');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('保存失败，请重试！');
-    return false;
-  }
-};
-
-/**
- *  删除
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: UserListItem[]) => {
-  const hide = message.loading('正在删除...');
-  if (!selectedRows) return true;
-  try {
-    await removeUser({
-      id: selectedRows.map((row) => row.id),
-    });
-    hide();
-    message.success('删除成功！');
-    return true;
-  } catch (error) {    
-    hide();
-    message.error('删除失败，请重试！');
-    return false;
-  }
-};
-
-/**
- * 启用/禁用
- * @param selectedRows
- * @param locked
- */
-const handleLockUser = async (selectedRows: UserListItem, locked: number) => {
-  const hide = message.loading('正在执行...');
-  if (!selectedRows) return true;
-  try {
-    locked === 1 ? await lockUser({id: selectedRows.id}) : await unLockUser({id: selectedRows.id});
-    hide();
-    // message.success('执行成功！');
-    return true;
-  } catch (error) {    
-    hide();
-    message.error('执行失败，请重试！');
-    return false;
-  }
-};
-
-/**
- *  获取用户角色
- * @param userId
- */
-const fetchRoleData = async (userId: number) => {
-  try {
-    const result = await queryRoleByUserId(userId);
-    const data = result.data;
-    const value = data.map((row: { id: string; }) => row.id);
-    return value;
-  } catch (error) {
-    message.error('加载失败，请重试！');    
-    return false;
-  }
-};
 
 const TableList: FC = () => {
   const addBtn = useRef(null);
@@ -137,8 +62,8 @@ const TableList: FC = () => {
 
   const handleSubmit = async (values: UserListItem) => {
     setAddBtnblur();
-    const success = await handleAddOrUpdate(values);
-    if (success) {
+    const result = await addOrUpdateUser(values);
+    if (result.code === 0) {
       setVisible(false);
       actionRef.current?.reload();
     }
@@ -147,7 +72,11 @@ const TableList: FC = () => {
   const showRoleModal = async (id: number) => {
     setRoleModalVisible(true);
     setUserId(id);
-    fetchRoleData(id).then(result => setRoleValues(result));
+    await queryRoleByUserId(id).then(result => {
+      const data = result.data;
+      const value = data.map((row: { id: string; }) => row.id);
+      setRoleValues(value)
+    });
   }
 
   const handleRoleCancel = () => {
@@ -169,10 +98,7 @@ const TableList: FC = () => {
         okText: '确认',
         cancelText: '取消',
         onOk: async () => {
-          const success = await handleRemove([currentItem]);
-          if (success) {
-            actionRef.current?.reload();
-          }
+          await removeUser([currentItem].map((row) => row.id)).then(() => actionRef.current?.reload());
         }
       });
     }
@@ -180,8 +106,7 @@ const TableList: FC = () => {
 
   //启用禁用用户
   const toggleStatus = async (checked: any, record: UserListItem) => {
-    const status = checked ? 0 : 1;
-    await handleLockUser(record, status);
+    checked ? await unLockUser(record.id) : await lockUser(record.id);
   };
 
   const MoreBtn: React.FC<{
@@ -293,9 +218,10 @@ const TableList: FC = () => {
         >
           <Button type="dashed" danger
             onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reload();
+              await removeUser(selectedRowsState.map((row) => row.id)).then(() => {
+                setSelectedRows([]);
+                actionRef.current?.reload();
+              });
             }}
           >
             批量删除

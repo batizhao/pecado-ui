@@ -3,56 +3,38 @@ import { Button, Input, Upload, Form, message, Modal } from 'antd';
 import { connect } from 'umi';
 import React, { FC, useState } from 'react';
 import { CurrentUser } from '../data';
-import PhoneView from './PhoneView';
+import { UserListItem } from '@/pages/ims/user/data';
+import { addOrUpdateUser } from '@/pages/ims/user/service';
 import styles from './BaseView.less';
 import 'antd/es/modal/style';
 import 'antd/es/slider/style';
-import { UserListItem } from '@/pages/ims/user/data';
-import { addOrUpdateUser } from '@/pages/ims/user/service';
 
-const validatorPhone = (rule: any, value: string, callback: (message?: string) => void) => {
-  const values = value.split('-');
-
-  if (!values[0]) {
-    callback('Please input your area code!');
-  }
-
-  if (!values[1]) {
-    callback('Please input your phone number!');
-  }
-
-  callback();
-};
-
-const getBase64 = (file) => {
+const getBase64 = (file: Blob) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
+    reader.onerror = (error) => reject(error);
   });
-}
+};
 
 interface BaseViewProps {
   currentUser?: CurrentUser;
 }
 
 const BaseView: FC<BaseViewProps> = (props) => {
-  
   const view: HTMLDivElement | undefined = undefined;
   const { currentUser } = props;
   const token = localStorage.getItem('token');
 
   const getAvatarURL = () => {
-    if (currentUser) {
-      if (currentUser.avatar) {
-        return 'http://localhost:8888/api/system/file/image/' + currentUser.avatar;
-      }
+    if (currentUser && currentUser.avatar) {
+      return currentUser.avatar;
     }
     return '';
-  }
+  };
 
-  const beforeUpload = (file) => {
+  const beforeUpload = (file: { type: string; size: number }) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG file!');
@@ -62,7 +44,7 @@ const BaseView: FC<BaseViewProps> = (props) => {
       message.error('Image must smaller than 2MB!');
     }
     return isJpgOrPng && isLt2M;
-  }
+  };
 
   const [fileList, setFileList] = useState<any[]>([
     {
@@ -81,7 +63,7 @@ const BaseView: FC<BaseViewProps> = (props) => {
 
   const handleCancel = () => setPreviewVisible(false);
 
-  const handlePreview = async (file) => {
+  const handlePreview = async (file: any) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
@@ -93,11 +75,13 @@ const BaseView: FC<BaseViewProps> = (props) => {
 
   const handleFinish = async (values: UserListItem) => {
     let avatar = getAvatarURL();
-    if(fileList[0].response) avatar = fileList[0].response.data.fileName;
-    
-    const result = await addOrUpdateUser({avatar: avatar, ...values});
+    if (fileList[0] && fileList[0].response){
+      avatar = 'http://localhost:8888/api/system/file/image/' + fileList[0].response.data.fileName;
+    } 
+
+    const result = await addOrUpdateUser({ avatar: avatar, ...values });
     if (result.code === 0) {
-      message.success('accountsettings.basic.update.success');
+      message.success('更新成功！');
     }
   };
 
@@ -137,33 +121,6 @@ const BaseView: FC<BaseViewProps> = (props) => {
           >
             <Input />
           </Form.Item>
-          {/* <Form.Item
-            name="address"
-            label="地址"
-            rules={[
-              {
-                required: true,
-                message: '请输入地址！',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="phone"
-            label="电话"
-            rules={[
-              {
-                required: true,
-                message: '请输入电话！',
-              },
-              {
-                validator: validatorPhone,
-              },
-            ]}
-          >
-            <PhoneView />
-          </Form.Item> */}
           <Form.Item>
             <Button htmlType="submit" type="primary">
               更新基本信息
@@ -177,7 +134,7 @@ const BaseView: FC<BaseViewProps> = (props) => {
             withCredentials
             headers={{
               Authorization: `Bearer ${token}`,
-            }}            
+            }}
             action="/api/system/file/upload"
             listType="picture-card"
             fileList={fileList}
@@ -188,12 +145,7 @@ const BaseView: FC<BaseViewProps> = (props) => {
             {fileList.length === 0 && '+ Upload'}
           </Upload>
         </ImgCrop>
-        <Modal
-          visible={previewVisible}
-          title={previewTitle}
-          footer={null}
-          onCancel={handleCancel}
-        >
+        <Modal visible={previewVisible} title={previewTitle} footer={null} onCancel={handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
       </div>

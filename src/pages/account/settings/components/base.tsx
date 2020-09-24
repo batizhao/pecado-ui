@@ -1,27 +1,14 @@
-import { UploadOutlined } from '@ant-design/icons';
-import { Button, Input, Upload, Form, message } from 'antd';
+import ImgCrop from 'antd-img-crop';
+import { Button, Input, Upload, Form, message, Modal } from 'antd';
 import { connect } from 'umi';
-import React, { Component } from 'react';
+import React, { FC, useState } from 'react';
 import { CurrentUser } from '../data';
 import PhoneView from './PhoneView';
 import styles from './BaseView.less';
-
-const AvatarView = ({ avatar }: { avatar: string }) => (
-  <>
-    <div className={styles.avatar_title}>Avatar</div>
-    <div className={styles.avatar}>
-      <img src={avatar} alt="avatar" />
-    </div>
-    <Upload showUploadList={false}>
-      <div className={styles.button_view}>
-        <Button>
-          <UploadOutlined />
-          更换头像
-        </Button>
-      </div>
-    </Upload>
-  </>
-);
+import 'antd/es/modal/style';
+import 'antd/es/slider/style';
+import { UserListItem } from '@/pages/ims/user/data';
+import { addOrUpdateUser } from '@/pages/ims/user/service';
 
 const validatorPhone = (rule: any, value: string, callback: (message?: string) => void) => {
   const values = value.split('-');
@@ -37,111 +24,182 @@ const validatorPhone = (rule: any, value: string, callback: (message?: string) =
   callback();
 };
 
+const getBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
+
 interface BaseViewProps {
   currentUser?: CurrentUser;
 }
 
-class BaseView extends Component<BaseViewProps> {
-  view: HTMLDivElement | undefined = undefined;
+const BaseView: FC<BaseViewProps> = (props) => {
+  
+  const view: HTMLDivElement | undefined = undefined;
+  const { currentUser } = props;
+  const token = localStorage.getItem('token');
 
-  getAvatarURL() {
-    const { currentUser } = this.props;
-
+  const getAvatarURL = () => {
     if (currentUser) {
       if (currentUser.avatar) {
-        return currentUser.avatar;
+        return 'http://localhost:8888/api/system/file/image/' + currentUser.avatar;
       }
-
-      const url = 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png';
-      return url;
     }
-
     return '';
   }
 
-  getViewDom = (ref: HTMLDivElement) => {
-    this.view = ref;
-  };
-  handleFinish = () => {
-    message.success('accountsettings.basic.update.success');
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  }
+
+  const [fileList, setFileList] = useState<any[]>([
+    {
+      uid: '-1',
+      name: '头像',
+      status: 'done',
+      url: getAvatarURL(),
+    },
+  ]);
+
+  const [previewVisible, setPreviewVisible] = useState<boolean>(false);
+  const [previewImage, setPreviewImage] = useState<string>();
+  const [previewTitle, setPreviewTitle] = useState<string>();
+
+  const handleChange = ({ fileList }) => setFileList(fileList);
+
+  const handleCancel = () => setPreviewVisible(false);
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+
+    setPreviewImage(file.url || file.preview);
+    setPreviewVisible(true);
+    setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
   };
 
-  render() {
-    const { currentUser } = this.props;
-    return (
-      <div className={styles.baseView} ref={this.getViewDom}>
-        <div className={styles.left}>
-          <Form
-            layout="vertical"
-            onFinish={this.handleFinish}
-            initialValues={currentUser}
-            hideRequiredMark
+  const handleFinish = async (values: UserListItem) => {
+    let avatar = getAvatarURL();
+    if(fileList[0].response) avatar = fileList[0].response.data.fileName;
+    
+    const result = await addOrUpdateUser({avatar: avatar, ...values});
+    if (result.code === 0) {
+      message.success('accountsettings.basic.update.success');
+    }
+  };
+
+  return (
+    <div className={styles.baseView} ref={view}>
+      <div className={styles.left}>
+        <Form
+          layout="vertical"
+          onFinish={handleFinish}
+          initialValues={currentUser}
+          hideRequiredMark
+        >
+          <Form.Item name="id" hidden={true} />
+          <Form.Item name="username" hidden={true} />
+          <Form.Item
+            name="email"
+            label="邮箱"
+            rules={[
+              {
+                required: true,
+                message: '请输入邮箱！',
+                type: 'email',
+              },
+            ]}
           >
-            <Form.Item
-              name="email"
-              label="邮箱"
-              rules={[
-                {
-                  required: true,
-                  message: 'accountsettings.basic.email-message',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="name"
-              label="姓名"
-              rules={[
-                {
-                  required: true,
-                  message: 'accountsettings.basic.nickname-message',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="address"
-              label="地址"
-              rules={[
-                {
-                  required: true,
-                  message: 'accountsettings.basic.address-message',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="phone"
-              label="电话"
-              rules={[
-                {
-                  required: true,
-                  message: 'accountsettings.basic.phone-message',
-                },
-                {
-                  validator: validatorPhone,
-                },
-              ]}
-            >
-              <PhoneView />
-            </Form.Item>
-            <Form.Item>
-              <Button htmlType="submit" type="primary">
-                更新基本信息
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-        <div className={styles.right}>
-          <AvatarView avatar={this.getAvatarURL()} />
-        </div>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="name"
+            label="姓名"
+            rules={[
+              {
+                required: true,
+                message: '请输入姓名！',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          {/* <Form.Item
+            name="address"
+            label="地址"
+            rules={[
+              {
+                required: true,
+                message: '请输入地址！',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="phone"
+            label="电话"
+            rules={[
+              {
+                required: true,
+                message: '请输入电话！',
+              },
+              {
+                validator: validatorPhone,
+              },
+            ]}
+          >
+            <PhoneView />
+          </Form.Item> */}
+          <Form.Item>
+            <Button htmlType="submit" type="primary">
+              更新基本信息
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
-    );
-  }
-}
+      <div className={styles.right}>
+        <ImgCrop grid>
+          <Upload
+            withCredentials
+            headers={{
+              Authorization: `Bearer ${token}`,
+            }}            
+            action="/api/system/file/upload"
+            listType="picture-card"
+            fileList={fileList}
+            onChange={handleChange}
+            onPreview={handlePreview}
+            beforeUpload={beforeUpload}
+          >
+            {fileList.length === 0 && '+ Upload'}
+          </Upload>
+        </ImgCrop>
+        <Modal
+          visible={previewVisible}
+          title={previewTitle}
+          footer={null}
+          onCancel={handleCancel}
+        >
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+      </div>
+    </div>
+  );
+};
 
 export default connect(
   ({

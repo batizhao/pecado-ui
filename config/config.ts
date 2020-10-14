@@ -87,6 +87,17 @@ export default defineConfig({
               ],
             },
             {
+              name: '开发平台',
+              path: '/dp',
+              routes: [
+                {
+                  path: '/dp/code',
+                  name: '代码生成',
+                  component: './dp/code',
+                },
+              ],
+            },
+            {
               name: '个人管理',
               path: '/account',
               routes: [

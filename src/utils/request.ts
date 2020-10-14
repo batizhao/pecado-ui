@@ -2,7 +2,7 @@
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
-import { extend } from 'umi-request';
+import { extend, RequestOptionsInit } from 'umi-request';
 import { notification } from 'antd';
 
 const codeMessage = {
@@ -26,12 +26,11 @@ const codeMessage = {
 /**
  * 异常处理程序
  */
-const errorHandler = (error: { response: Response; data: any; }) => {
+const errorHandler = (error: { response: Response; data: any }) => {
   const { response, data } = error;
   if (response && response.status) {
-    const errorText = (data && data.code && data.message) || 
-                      codeMessage[response.status] || 
-                      response.statusText;
+    const errorText =
+      (data && data.code && data.message) || codeMessage[response.status] || response.statusText;
     const { status, url } = response;
 
     notification.error({
@@ -71,7 +70,20 @@ request.interceptors.request.use((url, options) => {
   };
 });
 
-request.interceptors.response.use(async (response) => {
+request.interceptors.response.use(async (response: Response, options: RequestOptionsInit) => {
+  if (response.headers.get('Content-Type') === 'application/octet-stream;charset=UTF-8') {
+    response.blob().then((blob) => {
+      const a = document.createElement('a');
+      const url = window.URL.createObjectURL(blob);
+      const [, filename] = response.headers.get('Content-Disposition').split('filename=');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+    return response;
+  }
+
   const data = await response.clone().json();
   if (data.code === 100003) {
     location.href = '/user/login';
@@ -80,4 +92,3 @@ request.interceptors.response.use(async (response) => {
 });
 
 export default request;
-// 

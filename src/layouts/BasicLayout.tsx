@@ -16,6 +16,7 @@ import {
   SettingOutlined,
   GithubOutlined,
   UserOutlined,
+  CodepenOutlined,
 } from '@ant-design/icons';
 import { Result, Button } from 'antd';
 import Authorized from '@/utils/Authorized';
@@ -28,6 +29,7 @@ const IconMap = {
   dashboard: <DashboardOutlined />,
   setting: <SettingOutlined />,
   user: <UserOutlined />,
+  codepen: <CodepenOutlined />,
 };
 
 const noMatch = (

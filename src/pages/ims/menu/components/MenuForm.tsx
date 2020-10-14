@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Radio, InputNumber, Button } from 'antd';
 import { MenuTreeItem } from '../data';
-import { connect, Dispatch } from 'umi';
+import { connect, Dispatch, FormattedMessage } from 'umi';
 
 interface MenuFormProps {
   value?: MenuTreeItem;
@@ -75,10 +75,10 @@ const MenuForm: React.FC<MenuFormProps> = (props) => {
 
       <FormItem {...tailLayout} style={{ marginTop: 32 }}>
         <Button type="primary" htmlType="submit" loading={submitting}>
-          保存
+          <FormattedMessage id="basic-form.form.submit" />
         </Button>
         <Button htmlType="button" onClick={onReset} style={{ marginLeft: 8 }}>
-          重置
+          <FormattedMessage id="basic-form.form.reset" />
         </Button>
       </FormItem>
     </Form>

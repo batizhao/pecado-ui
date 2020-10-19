@@ -1,12 +1,12 @@
 import React, { FC, useEffect } from 'react';
 import { Modal, Form, Input } from 'antd';
-import { TableListItem } from '../data.d';
+import { UserListItem } from '../data.d';
 import styles from '../style.less';
 
 interface OperationModalProps {
   visible: boolean;
-  current: Partial<TableListItem> | undefined;
-  handleOk: (values: TableListItem) => void;
+  current: Partial<UserListItem> | undefined;
+  handleOk: (values: UserListItem) => void;
   handleCancel: () => void;
 }
 
@@ -42,7 +42,7 @@ const OperationModal: FC<OperationModalProps> = (props) => {
 
   const handleFinish = (values: { [key: string]: any }) => {
     if (handleOk) {
-      handleOk(values as TableListItem);
+      handleOk(values as UserListItem);
     }
   };
 

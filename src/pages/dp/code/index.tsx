@@ -58,16 +58,16 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             <Input placeholder="请输入" />
           </FormItem>
           <FormItem label="模块名" name="moduleName">
-            <Input placeholder="请输入" />
+            <Input placeholder="没有可空" />
           </FormItem>
           <FormItem label="表前缀" name="tablePrefix">
-            <Input placeholder="请输入" />
+            <Input placeholder="没有可空" />
           </FormItem>
           <FormItem label="包名" name="packageName">
-            <Input placeholder="默认 me.batizhao" />
+            <Input placeholder="例：me.batizhao.ims，me.batizhao.system" />
           </FormItem>
           <FormItem label="作者" name="author">
-            <Input placeholder="默认 batizhao" />
+            <Input placeholder="batizhao" />
           </FormItem>
           <FormItem label="注释" name="comments">
             <Input placeholder="默认读取表注释" />

@@ -91,6 +91,11 @@ export default defineConfig({
               path: '/dp',
               routes: [
                 {
+                  path: '/dp/ds',
+                  name: '数据源',
+                  component: './dp/ds',
+                },
+                {
                   path: '/dp/code',
                   name: '代码生成',
                   component: './dp/code',

@@ -1,91 +1,108 @@
-import { Button, Card, Input, Form } from 'antd';
-import { connect, Dispatch, FormattedMessage } from 'umi';
-import React, { FC } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
+import React, { FC, useRef, useState } from 'react';
+import OperationModal from './components/OperationModal';
+import { GenConfigItem, GenConfigParams } from './data';
+import { generateCode, queryTables } from './service';
 
-interface BasicFormProps {
-  submitting: boolean;
-  dispatch: Dispatch;
-}
+const TableList: FC = () => {
+  const actionRef = useRef<ActionType>();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [currentData, setCurrentData] = useState<Partial<GenConfigItem> | undefined>(undefined);
 
-const layout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 14 },
-};
+  const fetchData = async (fields: GenConfigParams) => {
+    const result = await queryTables({ ...fields });
+    return {
+      data: result.data.records,
+      total: result.data.total,
+      current: result.data.current,
+    }
+  }
 
-const tailLayout = {
-  wrapperCol: { offset: 6, span: 14 },
-};
-
-const BasicForm: FC<BasicFormProps> = (props) => {
-  const { submitting } = props;
-
-  const [form] = Form.useForm();
-  const FormItem = Form.Item;
-
-  const onFinish = (values: { [key: string]: any }) => {
-    const { dispatch } = props;
-    dispatch({
-      type: 'dpCode/submit',
-      payload: values,
-    });
+  const paginationProps = {
+    showSizeChanger: true,
+    showQuickJumper: true,
+    defaultPageSize: 10
   };
 
-  const onReset = () => {
-    form.resetFields();
+  const showModal = (item: GenConfigItem) => {
+    setVisible(true);
+    setCurrentData(item);
   };
+
+  const handleCancel = () => {
+    setVisible(false);
+    setCurrentData(undefined);
+  };
+
+  const handleSubmit = async (values: GenConfigItem) => {
+    await generateCode(values);
+  };
+
+  const columns: ProColumns<GenConfigItem>[] = [
+    {
+      title: '序号',
+      dataIndex: 'index',
+      valueType: 'indexBorder',
+      width: 80,
+    },
+    {
+      title: '表名',
+      dataIndex: 'tableName',
+    },
+    {
+      title: '表说明',
+      dataIndex: 'tableComment',
+    },
+    {
+      title: '字符集',
+      dataIndex: 'tableCollation',
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      valueType: 'dateTime',
+      hideInForm: true,
+      hideInSearch: true,
+    },
+    {
+      title: '操作',
+      dataIndex: 'option',
+      valueType: 'option',
+      render: (_, record) => (
+        <>
+          <a
+            onClick={(e) => {
+              e.preventDefault();
+              showModal(record);
+            }}
+          >
+            生成代码
+          </a>
+        </>
+      ),
+    },
+  ];
 
   return (
     <PageContainer>
-      <Card bordered={false}>
-        <Form
-          {...layout}
-          style={{ marginTop: 8 }}
-          form={form}
-          name="basic"
-          onFinish={onFinish}
-        >
-          <FormItem
-            label="表名"
-            name="tableName"
-            rules={[
-              {
-                required: true,
-                message: '请输入表名！',
-              },
-            ]}
-          >
-            <Input placeholder="请输入" />
-          </FormItem>
-          <FormItem label="模块名" name="moduleName">
-            <Input placeholder="没有可空" />
-          </FormItem>
-          <FormItem label="表前缀" name="tablePrefix">
-            <Input placeholder="没有可空" />
-          </FormItem>
-          <FormItem label="包名" name="packageName">
-            <Input placeholder="例：me.batizhao.ims，me.batizhao.system" />
-          </FormItem>
-          <FormItem label="作者" name="author">
-            <Input placeholder="batizhao" />
-          </FormItem>
-          <FormItem label="注释" name="comments">
-            <Input placeholder="默认读取表注释" />
-          </FormItem>
-          <FormItem {...tailLayout} style={{ marginTop: 32 }}>
-            <Button type="primary" htmlType="submit" loading={submitting}>
-              <FormattedMessage id="basic-form.form.submit" />
-            </Button>
-            <Button htmlType="button" onClick={onReset} style={{ marginLeft: 8 }}>
-              <FormattedMessage id="basic-form.form.reset" />
-            </Button>
-          </FormItem>
-        </Form>
-      </Card>
+      <ProTable<GenConfigItem>
+        headerTitle="查询表格"
+        actionRef={actionRef}
+        rowKey="id"
+        pagination={paginationProps}
+        request={fetchData}
+        columns={columns}
+      />
+
+      <OperationModal
+        current={currentData}
+        visible={visible}
+        handleOk={handleSubmit}
+        handleCancel={handleCancel}
+      />
     </PageContainer>
   );
 };
 
-export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
-  submitting: loading.effects['dpCode/submit'],
-}))(BasicForm);
+export default TableList;

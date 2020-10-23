@@ -1,13 +1,13 @@
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Input, Modal, Dropdown, Menu, Switch } from 'antd';
-import React, { useState, useRef, ReactText, FC } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import { FooterToolbar, PageContainer } from '@ant-design/pro-layout';
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
+import { Button, Divider, Modal, Switch } from 'antd';
+import React, { FC, useRef, useState } from 'react';
 import { findDOMNode } from 'react-dom';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
-
 import OperationModal from './components/OperationModal';
 import { DsListItem, DsListParams } from './data';
-import { removeDs, queryDs, addOrUpdateDs, lockDs, unLockDs } from './service';
+import { addOrUpdateDs, lockDs, queryDs, removeDs, unLockDs } from './service';
+
 
 const TableList: FC = () => {
   const addBtn = useRef(null);

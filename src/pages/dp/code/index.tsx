@@ -51,12 +51,19 @@ const TableList: FC = () => {
       dataIndex: 'tableName',
     },
     {
+      title: '数据源名',
+      dataIndex: 'dsName',
+      hideInTable: true,
+    },
+    {
       title: '表说明',
       dataIndex: 'tableComment',
+      hideInSearch: true,
     },
     {
       title: '字符集',
       dataIndex: 'tableCollation',
+      hideInSearch: true,
     },
     {
       title: '创建时间',

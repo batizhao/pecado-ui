@@ -5,6 +5,7 @@ export interface GenConfigItem {
   moduleName?: string;
   tablePrefix?: string;
   comments?: string;
+  dsName?:string;
 }
 
 // export interface TableMetaItem {

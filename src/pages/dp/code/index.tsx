@@ -16,13 +16,13 @@ const TableList: FC = () => {
       data: result.data.records,
       total: result.data.total,
       current: result.data.current,
-    }
-  }
+    };
+  };
 
   const paginationProps = {
     showSizeChanger: true,
     showQuickJumper: true,
-    defaultPageSize: 10
+    defaultPageSize: 10,
   };
 
   const showModal = (item: GenConfigItem) => {
@@ -47,13 +47,32 @@ const TableList: FC = () => {
       width: 80,
     },
     {
-      title: '表名',
-      dataIndex: 'tableName',
+      title: '数据源',
+      dataIndex: 'dsName',
+      initialValue: 'master',
+      filters: true,
+      valueType: 'select',
+      request: async () => [
+        {
+          label: 'master',
+          value: 'master',
+          status: 'Default',
+        },
+        {
+          label: 'ims',
+          value: 'ims',
+          status: 'Error',
+        },
+        {
+          label: 'system',
+          value: 'system',
+          status: 'Success',
+        },
+      ],
     },
     {
-      title: '数据源名',
-      dataIndex: 'dsName',
-      hideInTable: true,
+      title: '表名',
+      dataIndex: 'tableName',
     },
     {
       title: '表说明',
@@ -100,6 +119,9 @@ const TableList: FC = () => {
         pagination={paginationProps}
         request={fetchData}
         columns={columns}
+        search={{
+          filterType: 'light',
+        }}
       />
 
       <OperationModal

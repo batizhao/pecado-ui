@@ -51,33 +51,37 @@ const OperationModal: FC<OperationModalProps> = (props) => {
   const getModalContent = () => {
     return (
       <Form {...formLayout} form={form} onFinish={handleFinish}>
+        {/* <Form.Item name="dsName" hidden={true} /> */}
         <FormItem
-            label="表名"
-            name="tableName"
-            rules={[
-              {
-                required: true,
-                message: '请输入表名！',
-              },
-            ]}
-          >
-            <Input disabled />
-          </FormItem>
-          <FormItem label="模块名" name="moduleName">
+          label="表名"
+          name="tableName"
+          rules={[
+            {
+              required: true,
+              message: '请输入表名！',
+            },
+          ]}
+        >
+          <Input readOnly />
+        </FormItem>
+        {/* <FormItem label="数据源名" name="dsName">
             <Input placeholder="没有可空" />
-          </FormItem>
-          <FormItem label="表前缀" name="tablePrefix">
-            <Input placeholder="没有可空" />
-          </FormItem>
-          <FormItem label="包名" name="packageName">
-            <Input placeholder="例：me.batizhao.ims，me.batizhao.system" />
-          </FormItem>
-          <FormItem label="作者" name="author">
-            <Input placeholder="batizhao" />
-          </FormItem>
-          <FormItem label="注释" name="comments">
-            <Input placeholder="默认读取表注释" />
-          </FormItem>
+          </FormItem> */}
+        <FormItem label="模块名" name="moduleName">
+          <Input placeholder="没有可空" />
+        </FormItem>
+        <FormItem label="表前缀" name="tablePrefix">
+          <Input placeholder="没有可空" />
+        </FormItem>
+        <FormItem label="包名" name="packageName">
+          <Input placeholder="例：me.batizhao.ims，me.batizhao.system" />
+        </FormItem>
+        <FormItem label="作者" name="author">
+          <Input placeholder="batizhao" />
+        </FormItem>
+        <FormItem label="注释" name="comments">
+          <Input placeholder="默认读取表注释" />
+        </FormItem>
       </Form>
     );
   };

@@ -188,8 +188,8 @@ const TableList: FC = () => {
         actionRef={actionRef}
         rowKey="id"
         toolBarRender={() => [
-          <Button type="primary" onClick={showModal} ref={addBtn}>
-            <PlusOutlined /> 新建
+          <Button key="button" icon={<PlusOutlined />} type="primary" onClick={showModal} ref={addBtn}>
+            新建
           </Button>,
         ]}
         pagination={paginationProps}

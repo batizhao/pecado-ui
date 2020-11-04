@@ -6,7 +6,7 @@ import React, { FC, useRef, useState } from 'react';
 import { findDOMNode } from 'react-dom';
 import OperationModal from './components/OperationModal';
 import { DsListItem, DsListParams } from './data';
-import { addOrUpdateDs, lockDs, queryDs, removeDs, unLockDs } from './service';
+import { addOrUpdateDs, lockDs, queryDss, removeDs, unLockDs } from './service';
 
 
 const TableList: FC = () => {
@@ -17,7 +17,7 @@ const TableList: FC = () => {
   const [selectedRowsState, setSelectedRows] = useState<DsListItem[]>([]);
 
   const fetchData = async (fields: DsListParams) => {
-    const result = await queryDs({ ...fields });
+    const result = await queryDss({ ...fields });
     return {
       data: result.data.records,
       total: result.data.total,

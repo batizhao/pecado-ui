@@ -51,7 +51,7 @@ const OperationModal: FC<OperationModalProps> = (props) => {
   const getModalContent = () => {
     return (
       <Form {...formLayout} form={form} onFinish={handleFinish}>
-        {/* <Form.Item name="dsName" hidden={true} /> */}
+        <FormItem name="dsName" hidden={true} />
         <FormItem
           label="表名"
           name="tableName"
@@ -64,9 +64,6 @@ const OperationModal: FC<OperationModalProps> = (props) => {
         >
           <Input readOnly />
         </FormItem>
-        {/* <FormItem label="数据源名" name="dsName">
-            <Input placeholder="没有可空" />
-          </FormItem> */}
         <FormItem label="模块名" name="moduleName">
           <Input placeholder="没有可空" />
         </FormItem>

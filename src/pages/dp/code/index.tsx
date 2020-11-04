@@ -1,6 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
 import React, { FC, useRef, useState } from 'react';
+import { queryDs } from '../ds/service';
 import OperationModal from './components/OperationModal';
 import { GenConfigItem, GenConfigParams } from './data';
 import { generateCode, queryTables } from './service';
@@ -17,6 +18,22 @@ const TableList: FC = () => {
       total: result.data.total,
       current: result.data.current,
     };
+  };
+
+  const fetchDsData = async () => {
+    const result = await queryDs();
+    const data = result.data;
+
+    //数组转json
+    const json: { label: string; value: string; }[] = [];
+    Object.keys(data).forEach((key) =>
+      json.push({
+        label: data[key].name,
+        value: data[key].name,
+      }),
+    );
+
+    return json;
   };
 
   const paginationProps = {
@@ -52,23 +69,7 @@ const TableList: FC = () => {
       initialValue: 'master',
       filters: true,
       valueType: 'select',
-      request: async () => [
-        {
-          label: 'master',
-          value: 'master',
-          status: 'Default',
-        },
-        {
-          label: 'ims',
-          value: 'ims',
-          status: 'Error',
-        },
-        {
-          label: 'system',
-          value: 'system',
-          status: 'Success',
-        },
-      ],
+      request: () => fetchDsData(),
     },
     {
       title: '表名',

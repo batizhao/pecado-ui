@@ -1,10 +1,14 @@
 import request from '@/utils/request';
 import { DsListParams, DsListItem } from './data';
 
-export async function queryDs(params?: DsListParams) {
+export async function queryDss(params?: DsListParams) {
   return request('/api/dp/dss', {
     params,
   });
+}
+
+export async function queryDs() {
+  return request('/api/dp/ds');
 }
 
 export async function removeDs(id: number[]) {

@@ -167,7 +167,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
         );
       }}
       footerRender={() => defaultFooterDom}
-      menuDataRender={() => menuDataRender(currentMenu)}
+      postMenuData={() => menuDataRender(currentMenu)}
       rightContentRender={() => <RightContent />}
       {...props}
       {...settings}

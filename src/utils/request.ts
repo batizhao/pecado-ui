@@ -28,7 +28,7 @@ const codeMessage = {
  */
 const errorHandler = (error: { response: Response; data: any }) => {
   const { response, data } = error;
-  if (response && response.status) {
+  if (response && response.status && response.status != 200) {
     const errorText =
       (data && data.code && data.message) || codeMessage[response.status] || response.statusText;
     const { status, url } = response;

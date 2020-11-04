@@ -53,7 +53,7 @@ const TableList: FC = () => {
   };
 
   const handleSubmit = async (values: GenConfigItem) => {
-    await generateCode(values);
+    await generateCode(values).then(() => setVisible(false));
   };
 
   const columns: ProColumns<GenConfigItem>[] = [

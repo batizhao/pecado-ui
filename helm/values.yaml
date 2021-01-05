@@ -46,7 +46,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: www.pecado.com
+    - host: antd.pecado.com
       paths:
         - path: /
   tls: []

@@ -1,8 +1,7 @@
-FROM circleci/node:latest-browsers as builder
+FROM node:latest
 WORKDIR /usr/src/app/
-USER root
 COPY package.json ./
-RUN yarn
+RUN npm install --silent --no-cache --registry=https://registry.npm.taobao.org
 COPY ./ ./
 RUN npm run build
 

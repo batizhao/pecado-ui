@@ -76,7 +76,7 @@ const BaseView: FC<BaseViewProps> = (props) => {
   const handleFinish = async (values: UserListItem) => {
     let avatar = getAvatarURL();
     if (fileList[0] && fileList[0].response){
-      avatar = 'http://localhost:8888/api/system/file/image/' + fileList[0].response.data.fileName;
+      avatar = '/api/system/file/image/' + fileList[0].response.data.fileName;
     } 
 
     const result = await addOrUpdateUser({ avatar: avatar, ...values });

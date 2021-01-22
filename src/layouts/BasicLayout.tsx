@@ -13,10 +13,9 @@ import React, { useEffect } from 'react';
 import { Link, connect, Dispatch, history } from 'umi';
 import {
   DashboardOutlined,
-  SettingOutlined,
   GithubOutlined,
   UserOutlined,
-  CodepenOutlined,
+  createFromIconfontCN
 } from '@ant-design/icons';
 import { Result, Button } from 'antd';
 import Authorized from '@/utils/Authorized';
@@ -25,11 +24,15 @@ import { ConnectState } from '@/models/connect';
 import { getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
 
+const IconFont = createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_2344130_sgfrz9g0j8e.js',
+});
+
 const IconMap = {
   dashboard: <DashboardOutlined />,
-  setting: <SettingOutlined />,
+  develop: <IconFont type="icon-kaifazhong" />,
   user: <UserOutlined />,
-  codepen: <CodepenOutlined />,
+  system: <IconFont type="icon-shezhi" />,
 };
 
 const noMatch = (

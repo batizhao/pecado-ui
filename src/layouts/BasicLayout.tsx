@@ -14,7 +14,6 @@ import { Link, connect, Dispatch, history } from 'umi';
 import {
   DashboardOutlined,
   GithubOutlined,
-  UserOutlined,
   createFromIconfontCN
 } from '@ant-design/icons';
 import { Result, Button } from 'antd';
@@ -25,13 +24,13 @@ import { getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_2344130_sgfrz9g0j8e.js',
+  scriptUrl: '//at.alicdn.com/t/font_2344130_zpv4o5fotbh.js',
 });
 
 const IconMap = {
   dashboard: <DashboardOutlined />,
   develop: <IconFont type="icon-kaifazhong" />,
-  user: <UserOutlined />,
+  ims: <IconFont type="icon-quanxianguanli" />,
   system: <IconFont type="icon-shezhi" />,
 };
 

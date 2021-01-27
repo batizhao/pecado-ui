@@ -12,5 +12,5 @@ export interface SystemLog {
   username?: string;
   url: string;
   ip: string;
-  createdTime: Date;  
+  createTime: Date;  
 }

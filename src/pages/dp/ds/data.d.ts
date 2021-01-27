@@ -5,7 +5,7 @@ export interface DsListItem {
   name: string;
   password: string;
   status?: number;
-  createdTime?: Date;
+  createTime?: Date;
 }
 
 // export interface TableListPagination {

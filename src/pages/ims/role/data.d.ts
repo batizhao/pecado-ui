@@ -3,7 +3,7 @@ export interface RoleListItem {
   name: string;
   code: string;
   description?: string;
-  createdTime?: Date;
+  createTime?: Date;
 }
 
 // export interface TableListPagination {

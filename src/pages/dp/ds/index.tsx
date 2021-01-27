@@ -132,7 +132,7 @@ const TableList: FC = () => {
     },
     {
       title: '创建时间',
-      dataIndex: 'createdTime',
+      dataIndex: 'createTime',
       valueType: 'dateTime',
       hideInForm: true,
       hideInSearch: true,

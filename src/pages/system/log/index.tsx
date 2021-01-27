@@ -127,7 +127,7 @@ export const BasicList: FC<ListProps> = (props) => {
                             <Tag color="green">{item.clientId}</Tag>
                             <Tag color="purple">{item.username}</Tag>
                             <Tag color="geekblue">{item.ip}</Tag>
-                            <Tag color="orange">{item.createdTime}</Tag>
+                            <Tag color="orange">{item.createTime}</Tag>
                             <Tag color="pink">{item.spend}ms</Tag>
                             <Tag color="geekblue">{item.url}</Tag>
                           </Space>

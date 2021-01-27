@@ -5,7 +5,7 @@ export interface UserListItem {
   name: string;
   email: string;
   locked?: number;
-  createdTime?: Date;
+  createTime?: Date;
 }
 
 // export interface TableListPagination {

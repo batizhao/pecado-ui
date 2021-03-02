@@ -50,7 +50,7 @@ const Model: ModelType = {
     saveCurrentUser(state, action) {
       return {
         ...(state as ModalState),
-        currentUser: action.payload.data.userVO || {},
+        currentUser: action.payload.data.user || {},
       };
     },
     queryList(state, action) {

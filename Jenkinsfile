@@ -11,7 +11,7 @@ node {
 
   stage('Build Docker Image') {
     build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-    image_name = "${registry_addr}/${maintainer_name}/ui:${version}-${build_tag}"
+    image_name = "${registry_addr}/${maintainer_name}/antd-ui:${version}-${build_tag}"
     image = docker.build(image_name)
   }
 

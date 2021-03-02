@@ -76,7 +76,7 @@ const Model: ModelType = {
     saveCurrentUser(state, action) {
       return {
         ...state,
-        currentUser: action.payload.data.userVO || {},
+        currentUser: action.payload.data.user || {},
       };
     },
     changeNotifyCount(state = {}, action) {
